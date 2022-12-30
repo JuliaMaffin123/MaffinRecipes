@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.maffin.recipes.databinding.FragmentSearchBinding;
-import com.maffin.recipes.ui.search.SearchViewModel;
 
 public class SearchFragment extends Fragment {
 

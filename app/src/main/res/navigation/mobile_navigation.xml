@@ -22,4 +22,10 @@
         android:name="com.maffin.recipes.ui.cart.CartFragment"
         android:label="@string/menu_cart"
         tools:layout="@layout/fragment_cart" />
+
+    <fragment
+        android:id="@+id/action_search"
+        android:name="com.maffin.recipes.ui.search.SearchFragment"
+        android:label="@string/action_search"
+        tools:layout="@layout/fragment_search" />
 </navigation>

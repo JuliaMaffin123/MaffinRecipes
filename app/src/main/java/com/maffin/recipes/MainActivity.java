@@ -1,8 +1,12 @@
 package com.maffin.recipes;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -15,6 +19,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.maffin.recipes.databinding.ActivityMainBinding;
+import com.maffin.recipes.ui.search.SearchFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,6 +59,30 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        CharSequence message;
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                // Handle activity menu item
+                message = "Выбран пункт меню Настройки";
+                NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+                NavigationUI.onNavDestinationSelected(item, navController);
+                break;
+            default:
+                // Handle fragment menu items
+                //return super.onOptionsItemSelected(item);
+                message = "Ничего не выбрано";
+                break;
+        }
+        // выводим уведомление о выбранном пункте меню
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
