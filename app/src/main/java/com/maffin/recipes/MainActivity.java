@@ -63,25 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        CharSequence message;
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                // Handle activity menu item
-                message = "Выбран пункт меню Настройки";
-                NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-                NavigationUI.onNavDestinationSelected(item, navController);
-                break;
-            default:
-                // Handle fragment menu items
-                //return super.onOptionsItemSelected(item);
-                message = "Ничего не выбрано";
-                break;
-        }
-        // выводим уведомление о выбранном пункте меню
-        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavigationUI.onNavDestinationSelected(item, navController);
         return super.onOptionsItemSelected(item);
     }
 
