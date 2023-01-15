@@ -13,23 +13,38 @@ import com.maffin.recipes.db.entity.Favorite;
 
 import java.util.List;
 
+/**
+ * Модель данных для отображения на фрагменте ИЗБРАННОЕ.
+ */
 public class FavoriteViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    private final MutableLiveData<List<Favorite>> mList;
+    private final AppDatabase db;
 
     public FavoriteViewModel() {
-        // Запрос в базу
-        AppDatabase db = App.getInstance().getDatabase();
-        FavoriteDao favoriteDao = db.favoriteDao();
-        List<Favorite> favoriteList = favoriteDao.getAll();
-        int cnt = favoriteList.size();
-        Log.d("FVM", "Отобрано " + cnt + " записей");
-        // Наполняем текстданными
-        mText = new MutableLiveData<>();
-        mText.setValue("This is favorite fragment");
+        // Инциализируем переменные, через которые будут передаваться данные в активность
+        mList = new MutableLiveData<>();
+        // Инициализируем соединение с базой данных
+        db = App.getInstance().getDatabase();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    /**
+     * Возвращает объект LiveData со списком записей.
+     * @return LiveData
+     */
+    public LiveData<List<Favorite>> getList() {
+        return mList;
+    }
+
+    /**
+     * Загрузка списка рецептов из базы данных.
+     */
+    public void loadData() {
+        // Запрос в базу
+        FavoriteDao favoriteDao = db.favoriteDao();
+        List<Favorite> favoriteList = favoriteDao.getAll();
+        Log.d("FVM", "Отобрано " + favoriteList.size() + " записей");
+        // Запоминаем отобранный список
+        mList.setValue(favoriteList);
     }
 }

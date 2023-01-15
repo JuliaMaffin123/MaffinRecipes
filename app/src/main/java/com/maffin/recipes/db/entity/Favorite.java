@@ -15,4 +15,10 @@ public class Favorite {
 
     @ColumnInfo(name = "receipt_name")
     public String receiptName;
+
+    @ColumnInfo(name = "receipt_time")
+    public int receiptTime;
+
+    @ColumnInfo(name = "receipt_kkal")
+    public int receiptKkal;
 }
