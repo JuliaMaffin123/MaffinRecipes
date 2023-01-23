@@ -6,4 +6,10 @@
     <string name="menu_home">Рецепты</string>
     <string name="menu_favorite">Избранное</string>
     <string name="menu_cart">Список покупок</string>
+
+    <string name="receipt_thumb">Миниатюра рецепта</string>
+    <string name="action_delete_favorite">Удалить из избранного</string>
+
+    <string name="template_time">[time-icon] %1$d м</string>
+    <string name="template_energy">[energy-icon] %1$d кКал</string>
 </resources>
