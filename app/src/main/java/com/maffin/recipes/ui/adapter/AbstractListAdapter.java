@@ -14,7 +14,6 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.maffin.recipes.R;
-import com.maffin.recipes.adapter.IGetItemPosition;
 import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.ui.draw.VerticalImageSpan;
 
@@ -24,7 +23,7 @@ import java.util.List;
  * Абстрактный адаптер для заполнения данными элемента списков.
  * Для переопределения вывода надо переопределить метод bindView().
  */
-public abstract class AbstractListAdapter extends ArrayAdapter implements IGetItemPosition {
+public abstract class AbstractListAdapter extends ArrayAdapter {
     /** Ссылка на объек, конвертирующий шаблон в отображаемые элементы. */
     private final LayoutInflater mInflater;
     /** интерфейс к глобальной информации о среде приложений. */
@@ -51,17 +50,6 @@ public abstract class AbstractListAdapter extends ArrayAdapter implements IGetIt
      */
     public Context getContext() {
         return mContext;
-    }
-
-    /**
-     * Возвращает позицию элемента по его id.
-     *
-     * @param id идентификатор записи
-     * @return позиция элемента
-     */
-    @Override
-    public int getItemPosition(long id) {
-        return Long.valueOf(id).intValue();
     }
 
     /**
@@ -98,7 +86,7 @@ public abstract class AbstractListAdapter extends ArrayAdapter implements IGetIt
      * @param parent  ссылка на контейнер, в котором создается элемент списка, т.е. сам список
      * @return созданный объект (элемент списка)
      */
-    public final View newView(final Context context, final ViewGroup parent) {
+    public View newView(final Context context, final ViewGroup parent) {
         // Создаем объект для хранения ссылок на составные части элемента списка
         final ViewHolder holder = new ViewHolder();
         // Создаем представление элемента списка по разметке
@@ -109,11 +97,31 @@ public abstract class AbstractListAdapter extends ArrayAdapter implements IGetIt
         holder.mEnergy = view.findViewById(R.id.receiptEnergy);
         holder.mThumbnail = (ImageView) view.findViewById(R.id.thumbnail);
         holder.mDeleteFromFavorite = view.findViewById(R.id.deleteFromFavorite);
+
+        // Навешиваем обработчик нажатия кнопки удаления
+        holder.mDeleteFromFavorite.setOnClickListener(v -> onDeleteClick(v));
+
         // Сохраняем ссылку на холдер в тэге представления
         view.setTag(holder);
         return view;
     }
 
+    /**
+     * Абстрактный метод. Вызывается при нажатии на кнопку удаления из списка.
+     * @param v ссылка на View кнопки
+     */
+    public void onDeleteClick(View v) {
+        // По умолчанию ничего не выполняется
+    };
+
+    /**
+     * Умеет добавлять иконку вместо placeholder-а в TextView.
+     * @param textView  ссылка на TextView
+     * @param atText    placeholder, который надо заменить на иконку
+     * @param imageId   ссылка на ресурс иконки
+     * @param imgWidth  ширина иконки
+     * @param imgHeight высота иконки
+     */
     protected void spanImageIntoText(TextView textView, String atText, int imageId, int imgWidth, int imgHeight) {
         String text = textView.getText().toString();
         SpannableStringBuilder ssb = new SpannableStringBuilder(text);

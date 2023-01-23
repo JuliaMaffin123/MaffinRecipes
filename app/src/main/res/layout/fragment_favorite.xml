@@ -8,7 +8,7 @@
     tools:context=".ui.favorite.FavoriteFragment">
 
     <ListView
-        android:id="@+id/list_favorite"
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
