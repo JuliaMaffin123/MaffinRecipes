@@ -9,6 +9,7 @@
 
     <string name="receipt_thumb">Миниатюра рецепта</string>
     <string name="action_delete_favorite">Удалить из избранного</string>
+    <string name="empty_favorite">У Вас нет ни одного рецепта в «Избранном». Откройте понравившийся рецепт и нажмите сердечко в правом верхнем углу.</string>
 
     <string name="template_time">[time-icon] %1$d м</string>
     <string name="template_energy">[energy-icon] %1$d кКал</string>
