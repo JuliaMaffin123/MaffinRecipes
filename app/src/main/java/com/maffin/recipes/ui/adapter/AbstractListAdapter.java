@@ -39,7 +39,7 @@ public abstract class AbstractListAdapter extends ArrayAdapter implements IGetIt
      * @param list    список с данными для адаптера
      */
     public AbstractListAdapter(final Context context, final List list) {
-        super(context, R.layout.favorite_list_item, R.id.receiptName, list);
+        super(context, R.layout.list_item, R.id.receiptName, list);
         mInflater = LayoutInflater.from(context);
         mContext = context;
         mData = list;
@@ -102,7 +102,7 @@ public abstract class AbstractListAdapter extends ArrayAdapter implements IGetIt
         // Создаем объект для хранения ссылок на составные части элемента списка
         final ViewHolder holder = new ViewHolder();
         // Создаем представление элемента списка по разметке
-        final View view = mInflater.inflate(R.layout.favorite_list_item, parent, false);
+        final View view = mInflater.inflate(R.layout.list_item, parent, false);
         // Получаем ссылки на составные части элемента списка и сохранеям их в холдере
         holder.mName = view.findViewById(R.id.receiptName);
         holder.mTime = view.findViewById(R.id.receiptTime);
