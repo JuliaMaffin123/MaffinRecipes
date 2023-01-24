@@ -17,8 +17,11 @@ import java.util.List;
  * Модель данных для отображения на фрагменте ИЗБРАННОЕ.
  */
 public class FavoriteViewModel extends ViewModel {
-
+    /** TAG для логирования. */
+    private static final String TAG = "FavoriteViewModel";
+    /** Список избранных рецептов. */
     private final MutableLiveData<List<Favorite>> mList;
+    /** База данных. */
     private final AppDatabase db;
 
     public FavoriteViewModel() {
@@ -43,7 +46,7 @@ public class FavoriteViewModel extends ViewModel {
         // Запрос в базу
         FavoriteDao favoriteDao = db.favoriteDao();
         List<Favorite> favoriteList = favoriteDao.getAll();
-        Log.d("FVM", "Отобрано " + favoriteList.size() + " записей");
+        Log.d(TAG, "Отобрано " + favoriteList.size() + " записей");
         // Запоминаем отобранный список
         mList.setValue(favoriteList);
     }

@@ -26,7 +26,7 @@ import com.maffin.recipes.db.entity.Favorite;
 public class FavoriteFragment extends ListFragment {
 
     /** TAG для логирования. */
-    private static final String TAG = "FF";
+    private static final String TAG = "FavoriteFragment";
     /** Разметка фрагмента. */
     private FragmentFavoriteBinding binding;
     /** Модель данных фрагмента. */
