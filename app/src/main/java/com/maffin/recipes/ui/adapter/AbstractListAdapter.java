@@ -22,6 +22,12 @@ import java.util.List;
 /**
  * Абстрактный адаптер для заполнения данными элемента списков.
  * Для переопределения вывода надо переопределить метод bindView().
+ * Предпологается, что шаблон состоит из следующих элементов:
+ *  - thumbnail - ImageView, изображение рецепта
+ *  - receiptName - TextView, наименование рецепта
+ *  - receiptTime - TextView, время приготовления
+ *  - receiptEnergy - TextView, каллорийность
+ *  - deleteFromFavorite - ImageView, кнопка удаления из избранного (опционально)
  */
 public abstract class AbstractListAdapter extends ArrayAdapter {
     /** Ссылка на объек, конвертирующий шаблон в отображаемые элементы. */
@@ -34,11 +40,12 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
     /**
      * Конструктор.
      *
-     * @param context интерфейс к глобальной информации о среде приложений.
-     * @param list    список с данными для адаптера
+     * @param context   интерфейс к глобальной информации о среде приложений.
+     * @param resource  ID макета элемента списка
+     * @param list      список с данными для адаптера
      */
-    public AbstractListAdapter(final Context context, final List list) {
-        super(context, R.layout.list_item, R.id.receiptName, list);
+    public AbstractListAdapter(final Context context, int resource, final List list) {
+        super(context, resource, R.id.receiptName, list);
         mInflater = LayoutInflater.from(context);
         mContext = context;
         mData = list;
@@ -90,7 +97,7 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
         // Создаем объект для хранения ссылок на составные части элемента списка
         final ViewHolder holder = new ViewHolder();
         // Создаем представление элемента списка по разметке
-        final View view = mInflater.inflate(R.layout.list_item, parent, false);
+        final View view = mInflater.inflate(R.layout.favorite_list_item, parent, false);
         // Получаем ссылки на составные части элемента списка и сохранеям их в холдере
         holder.mName = view.findViewById(R.id.receiptName);
         holder.mTime = view.findViewById(R.id.receiptTime);
@@ -99,7 +106,9 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
         holder.mDeleteFromFavorite = view.findViewById(R.id.deleteFromFavorite);
 
         // Навешиваем обработчик нажатия кнопки удаления
-        holder.mDeleteFromFavorite.setOnClickListener(v -> onDeleteClick(v));
+        if (holder.mDeleteFromFavorite != null) {
+            holder.mDeleteFromFavorite.setOnClickListener(v -> onDeleteClick(v));
+        }
 
         // Сохраняем ссылку на холдер в тэге представления
         view.setTag(holder);
@@ -149,30 +158,36 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
         // Наполним строку данными
         holder.setId(receipt.receiptId);
         // Наименование рецепта
-        holder.getName().setText(receipt.receiptName);
+        if (holder.getName() != null) {
+            holder.getName().setText(receipt.receiptName);
+        }
         // Время приготовления рецепта
-        int receiptTime = receipt.receiptTime;
-        if (receiptTime > 0) {
-            holder.getTime().setVisibility(View.VISIBLE);
-            holder.getTime().setText(context.getString(R.string.template_time, receiptTime));
-            spanImageIntoText(holder.getTime(), "[time-icon]",
-                    R.drawable.ic_baseline_access_time_24,
-                    context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
-                    context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
-        } else {
-            holder.getTime().setVisibility(View.GONE);
+        if (holder.getTime() != null) {
+            int receiptTime = receipt.receiptTime;
+            if (receiptTime > 0) {
+                holder.getTime().setVisibility(View.VISIBLE);
+                holder.getTime().setText(context.getString(R.string.template_time, receiptTime));
+                spanImageIntoText(holder.getTime(), context.getString(R.string.holder_time),
+                        R.drawable.ic_baseline_access_time_24,
+                        context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
+                        context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
+            } else {
+                holder.getTime().setVisibility(View.GONE);
+            }
         }
         // Калорийность рецепта
-        int receiptKkal = receipt.receiptKkal;
-        if (receiptKkal > 0) {
-            holder.getEnergy().setVisibility(View.VISIBLE);
-            holder.getEnergy().setText(context.getString(R.string.template_energy, receiptKkal));
-            spanImageIntoText(holder.getEnergy(), "[energy-icon]",
-                    R.drawable.ic_baseline_fastfood_24,
-                    context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
-                    context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
-        } else {
-            holder.getEnergy().setVisibility(View.GONE);
+        if (holder.getEnergy() != null) {
+            int receiptKkal = receipt.receiptKkal;
+            if (receiptKkal > 0) {
+                holder.getEnergy().setVisibility(View.VISIBLE);
+                holder.getEnergy().setText(context.getString(R.string.template_energy, receiptKkal));
+                spanImageIntoText(holder.getEnergy(), context.getString(R.string.holder_energy),
+                        R.drawable.ic_baseline_fastfood_24,
+                        context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
+                        context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
+            } else {
+                holder.getEnergy().setVisibility(View.GONE);
+            }
         }
     }
 

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import com.maffin.recipes.R;
 import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
 
@@ -19,7 +20,7 @@ public class FavoriteAdapter extends AbstractListAdapter {
      * @param list         список с данными для адаптера
      */
     public FavoriteAdapter(Context context, List<Favorite> list) {
-        super(context, list);
+        super(context, R.layout.favorite_list_item, list);
     }
 
     @Override
