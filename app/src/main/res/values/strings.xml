@@ -8,8 +8,12 @@
     <string name="menu_cart">Список покупок</string>
 
     <string name="receipt_thumb">Миниатюра рецепта</string>
+    <string name="receipt_image">Большая картинка рецепта</string>
     <string name="action_delete_favorite">Удалить из избранного</string>
     <string name="empty_favorite">У Вас нет ни одного рецепта в «Избранном». Откройте понравившийся рецепт и нажмите сердечко в правом верхнем углу.</string>
+    <string name="stub_receipt_name">Пример названия рецепта</string>
+    <string name="stub_receipt_time">(=) 10 м</string>
+    <string name="stub_receipt_energy">(=) 100 Ккал</string>
 
     <string name="holder_time">[time-icon]</string>
     <string name="template_time">[time-icon] %1$d м</string>
