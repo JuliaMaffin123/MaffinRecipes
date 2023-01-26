@@ -36,6 +36,8 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
     private Context mContext;
     /** Список с данными для адаптера. */
     private List mData;
+    /** ID ресурса с шаблоном элемента списка. */
+    private int mResource;
 
     /**
      * Конструктор.
@@ -49,6 +51,7 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
         mInflater = LayoutInflater.from(context);
         mContext = context;
         mData = list;
+        mResource = resource;
     }
 
     /**
@@ -97,12 +100,12 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
         // Создаем объект для хранения ссылок на составные части элемента списка
         final ViewHolder holder = new ViewHolder();
         // Создаем представление элемента списка по разметке
-        final View view = mInflater.inflate(R.layout.favorite_list_item, parent, false);
+        final View view = mInflater.inflate(mResource, parent, false);
         // Получаем ссылки на составные части элемента списка и сохранеям их в холдере
         holder.mName = view.findViewById(R.id.receiptName);
         holder.mTime = view.findViewById(R.id.receiptTime);
         holder.mEnergy = view.findViewById(R.id.receiptEnergy);
-        holder.mThumbnail = (ImageView) view.findViewById(R.id.thumbnail);
+        holder.mThumbnail = view.findViewById(R.id.thumbnail);
         holder.mDeleteFromFavorite = view.findViewById(R.id.deleteFromFavorite);
 
         // Навешиваем обработчик нажатия кнопки удаления
@@ -149,48 +152,7 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
      * @param position позиция в списке
      * @param view     Объект, соответствующий элементу списка
      */
-    public void bindView(int position, View view) {
-        Context context = getContext();
-        // Получим ссылки на составные части шаблона
-        ViewHolder holder = (ViewHolder) view.getTag();
-        // Получим ссылку на рецепт (это элемент массива в соответствующей позиции)
-        final Favorite receipt = (Favorite) getData().get(position);
-        // Наполним строку данными
-        holder.setId(receipt.receiptId);
-        // Наименование рецепта
-        if (holder.getName() != null) {
-            holder.getName().setText(receipt.receiptName);
-        }
-        // Время приготовления рецепта
-        if (holder.getTime() != null) {
-            int receiptTime = receipt.receiptTime;
-            if (receiptTime > 0) {
-                holder.getTime().setVisibility(View.VISIBLE);
-                holder.getTime().setText(context.getString(R.string.template_time, receiptTime));
-                spanImageIntoText(holder.getTime(), context.getString(R.string.holder_time),
-                        R.drawable.ic_baseline_access_time_24,
-                        context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
-                        context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
-            } else {
-                holder.getTime().setVisibility(View.GONE);
-            }
-        }
-        // Калорийность рецепта
-        if (holder.getEnergy() != null) {
-            int receiptKkal = receipt.receiptKkal;
-            if (receiptKkal > 0) {
-                holder.getEnergy().setVisibility(View.VISIBLE);
-                holder.getEnergy().setText(context.getString(R.string.template_energy, receiptKkal));
-                spanImageIntoText(holder.getEnergy(), context.getString(R.string.holder_energy),
-                        R.drawable.ic_baseline_fastfood_24,
-                        context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
-                        context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
-            } else {
-                holder.getEnergy().setVisibility(View.GONE);
-            }
-        }
-    }
-
+    public abstract void bindView(int position, View view);
 
     /**
      * Вспомогательный класс для хранения ссылок на элементы шаблона.

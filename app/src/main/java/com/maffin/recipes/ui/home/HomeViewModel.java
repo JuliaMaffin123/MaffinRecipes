@@ -1,16 +1,16 @@
 package com.maffin.recipes.ui.home;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.google.gson.Gson;
-import com.maffin.recipes.network.AsyncRequest;
 import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.network.ReceiptService;
 import com.maffin.recipes.network.ResponseSuccess;
 
-import org.json.JSONObject;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,34 +24,31 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HomeViewModel extends ViewModel {
     /** TAG для логирования. */
     private static final String TAG = "HomeViewModel";
+    /** Адрес сервера. */
+    private final static String BASE_URL = "https://testoligon.ru";
     /** Список рецептов. */
-    //private final MutableLiveData<List<Receipt>> mList;
-    private final MutableLiveData<String> mText;
+    private final MutableLiveData<List<Receipt>> mList;
 
     public HomeViewModel() {
         // Инциализируем переменные, через которые будут передаваться данные в активность
-        mText = new MutableLiveData<>();
+        mList = new MutableLiveData<>();
     }
 
     /**
      * Возвращает объект LiveData со списком записей.
      * @return LiveData
      */
-    public LiveData<String> getText() {
-        //  return mList;
-        return mText;
+    public LiveData<List<Receipt>> getList() {
+        return mList;
     }
 
     /**
      * Загрузка списка рецептов из базы данных.
      */
     public void loadData() {
-        // Реализация запроса черз отдельный поток
-        // new RequestList().execute("https://testoligon.ru/recipes/list");
-
         // Реализация запроса через Retrofit
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://testoligon.ru")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ReceiptService service = retrofit.create(ReceiptService.class);
@@ -61,26 +58,17 @@ public class HomeViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ResponseSuccess<Receipt>> call, Response<ResponseSuccess<Receipt>> response) {
                 if (response.isSuccessful()) {
-                    Gson gson = new Gson();
-                    String json = gson.toJson(response.body());
-                    mText.setValue("Retrofit: " + json);
+                    // При успешном запросе извлекаем массив рецептов из ответа и передаем их на фрагмент через LiveData
+                    ResponseSuccess<Receipt> body = response.body();
+                    mList.setValue(body.getData());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseSuccess<Receipt>> call, Throwable t) {
-                mText.setValue("Что-то пошло не так: " + t.getMessage());
+                Log.e(TAG, "Что-то пошло не так!", t);
             }
         });
     }
 
-    /**
-     * Асинхронный запрос списка рецептов.
-     */
-    private class RequestList extends AsyncRequest {
-        @Override
-        public void onPostExecute(JSONObject data) {
-            mText.setValue(data.toString());
-        }
-    }
 }

@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.maffin.recipes.databinding.FragmentHomeBinding;
 import com.maffin.recipes.db.entity.Favorite;
+import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.ui.favorite.FavoriteAdapter;
 import com.maffin.recipes.ui.favorite.FavoriteViewModel;
 
@@ -36,13 +37,12 @@ public class HomeFragment extends Fragment {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         // Навешиваем прослушку на изменение данных в модели данных. Когда модель получит данные из БД,
         // прослушка через адаптер загрузит список в ListView
-//         final ListView listView = binding.list;
-//        homeViewModel.getList().observe(getViewLifecycleOwner(), favorites -> {
-//            ArrayAdapter<Receipt> adapter = new HomeAdapter(getContext(), receipts);
-//            listView.setAdapter(adapter);
-//        });
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final ListView listView = binding.list;
+        listView.setEmptyView(binding.empty);
+        homeViewModel.getList().observe(getViewLifecycleOwner(), receipts -> {
+            ArrayAdapter<Receipt> adapter = new HomeAdapter(getContext(), receipts);
+            listView.setAdapter(adapter);
+        });
 
         return binding.getRoot();
     }

@@ -17,6 +17,16 @@ import java.net.URL;
  * См. пример тут: https://stackoverflow.com/questions/62438770/android-asynctask-deprecated-need-substitute-examples/62438889#62438889
  * См. про Looper-ы и Handler-ы тут: http://javaway.info/mnogopotochnost-v-android-looper-handler-handlerthread-chast-1/
  * См. про postDelay: https://stackoverflow.com/questions/42379301/how-to-use-postdelayed-correctly-in-android-studio
+ *
+ * Пример использования:
+ *     new RequestList().execute("https://testoligon.ru/recipes/list");
+ *     ...
+ *     private class RequestList extends AsyncRequest {
+ *         @Override
+ *         public void onPostExecute(JSONObject data) {
+ *             mText.setValue(data.toString());
+ *         }
+ *     }
  */
 public abstract class AsyncRequest {
     /**

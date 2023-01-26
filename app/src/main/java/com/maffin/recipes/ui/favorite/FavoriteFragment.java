@@ -42,6 +42,7 @@ public class FavoriteFragment extends ListFragment {
         // Навешиваем прослушку на изменение данных в модели данных. Когда модель получит данные из БД,
         // прослушка через адаптер загрузит список в ListView
         final ListView listView = binding.list;
+        listView.setEmptyView(binding.empty);
         favoriteViewModel.getList().observe(getViewLifecycleOwner(), favorites -> {
             ArrayAdapter<Favorite> adapter = new FavoriteAdapter(getContext(), favorites);
             listView.setAdapter(adapter);
