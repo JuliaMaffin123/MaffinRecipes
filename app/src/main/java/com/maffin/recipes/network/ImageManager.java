@@ -1,12 +1,16 @@
 package com.maffin.recipes.network;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -34,12 +38,13 @@ public class ImageManager {
 
     /**
      * Загрузка изображения.
+     * @param context   контекст приложения
      * @param iUrl      адрес
      * @param iView     ImageView, получатель изображения
      * @param stub      ID ресурса, заглушка, на случай, если изображние не удалось загрузить
      *                  -1, если надо скрыть ImageView при отсутствии изображения
      */
-    public static void fetchImage(final String iUrl, final ImageView iView, final int stub) {
+    public static void fetchImage(final Context context, final String iUrl, final ImageView iView, final int stub) {
         // Если URL или ImageView не определены,
         if ( iUrl == null || iView == null )
             return;
@@ -81,18 +86,26 @@ public class ImageManager {
                     handler.sendMessage(message);
                 } else {
                     // Проверяем, может наша картинка ране была сохранена в файловой системе телефона?
-                    // ...
-                    // Картинка не известная, надо загружать из сети
-                    final Bitmap image = downloadImage(iUrl);
+                    Bitmap image = loadBitmap(context, iUrl);
                     if (image != null) {
-                        Log.v(TAG, "Изображение загружено по URL: " + iUrl);
                         // Добавляем картинку в кэш
                         BITMAP_HASH_MAP.put(iUrl, image);
                         // Передаем изображение а handler для отрисовки в UI
                         final Message message = handler.obtainMessage(1, image);
                         handler.sendMessage(message);
-                        // Сохраняем картинку в файловой системе для переиспользования в будущем
-                        // ...
+                    } else {
+                        // Картинка не известная, надо загружать из сети
+                        image = downloadImage(iUrl);
+                        if (image != null) {
+                            Log.v(TAG, "Изображение загружено по URL: " + iUrl);
+                            // Добавляем картинку в кэш
+                            BITMAP_HASH_MAP.put(iUrl, image);
+                            // Передаем изображение а handler для отрисовки в UI
+                            final Message message = handler.obtainMessage(1, image);
+                            handler.sendMessage(message);
+                            // Сохраняем картинку в файловой системе для переиспользования в будущем
+                            saveBitmap(context, image, iUrl);
+                        }
                     }
                 }
                 Looper.loop();
@@ -145,5 +158,45 @@ public class ImageManager {
                 conn.disconnect();
         }
         return bitmap;
+    }
+
+    public static void saveBitmap(final Context context, Bitmap bitmap, String url) {
+        String[] parts = url.split("/");
+        String fileName = parts[parts.length - 1];
+        try {
+            //create a file to write bitmap data
+            File file = new File(context.getExternalCacheDir(), fileName);
+            file.createNewFile();
+
+            //Convert bitmap to byte array
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+            byte[] bitmapdata = bos.toByteArray();
+
+            //write the bytes in file
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+            Log.v(TAG, "Файл сохранен на телефон: " + fileName);
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка сохранения файла на телефон: " + fileName, e);
+        }
+    }
+
+    public static Bitmap loadBitmap(final Context context, String url) {
+        String[] parts = url.split("/");
+        String fileName = parts[parts.length - 1];
+        try {
+            File file = new File(context.getExternalCacheDir(), fileName);
+            if (file.exists()) {
+                Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                Log.v(TAG, "Файл загружен с телефона: " + fileName);
+                return bitmap;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Ошибка загрузки файла с телефона: " + fileName, e);
+        }
+        return null;
     }
 }

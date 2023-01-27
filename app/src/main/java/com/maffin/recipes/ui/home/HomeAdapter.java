@@ -69,6 +69,6 @@ public class HomeAdapter extends AbstractListAdapter {
         }
         // Запускаем загрузку картинки
         String url = String.format(URL_TEMPLATE, receipt.getId());
-        ImageManager.fetchImage(url, holder.getThumbnail(), R.drawable.ic_cooking_chef_opacity);
+        ImageManager.fetchImage(context, url, holder.getThumbnail(), R.drawable.ic_cooking_chef_opacity);
     }
 }

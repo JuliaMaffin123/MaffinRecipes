@@ -79,6 +79,6 @@ public class FavoriteAdapter extends AbstractListAdapter {
         }
         // Запускаем загрузку картинки
         String url = String.format(URL_TEMPLATE, receipt.receiptId);
-        ImageManager.fetchImage(url, holder.getThumbnail(), R.drawable.ic_cook_thumb);
+        ImageManager.fetchImage(context, url, holder.getThumbnail(), R.drawable.ic_cook_thumb);
     }
 }
