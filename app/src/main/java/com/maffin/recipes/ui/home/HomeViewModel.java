@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.maffin.recipes.Config;
 import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.network.ReceiptService;
 import com.maffin.recipes.network.ResponseSuccess;
@@ -24,8 +25,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HomeViewModel extends ViewModel {
     /** TAG для логирования. */
     private static final String TAG = "HomeViewModel";
-    /** Адрес сервера. */
-    private final static String BASE_URL = "https://testoligon.ru";
     /** Список рецептов. */
     private final MutableLiveData<List<Receipt>> mList;
 
@@ -48,7 +47,7 @@ public class HomeViewModel extends ViewModel {
     public void loadData() {
         // Реализация запроса через Retrofit
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(Config.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ReceiptService service = retrofit.create(ReceiptService.class);

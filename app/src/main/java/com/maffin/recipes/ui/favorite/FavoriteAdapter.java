@@ -5,14 +5,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import com.maffin.recipes.Config;
 import com.maffin.recipes.R;
 import com.maffin.recipes.db.entity.Favorite;
+import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
 
 import java.util.List;
 
 public class FavoriteAdapter extends AbstractListAdapter {
-
+    /** Шаблон URL-а для загрузки изображений. */
+    private static final String URL_TEMPLATE = Config.BASE_URL + "/images/receipt-%d-thumbnail.png";
     /**
      * Конструктор.
      *
@@ -74,5 +77,8 @@ public class FavoriteAdapter extends AbstractListAdapter {
                 holder.getEnergy().setVisibility(View.GONE);
             }
         }
+        // Запускаем загрузку картинки
+        String url = String.format(URL_TEMPLATE, receipt.receiptId);
+        ImageManager.fetchImage(url, holder.getThumbnail(), R.drawable.ic_cook_thumb);
     }
 }

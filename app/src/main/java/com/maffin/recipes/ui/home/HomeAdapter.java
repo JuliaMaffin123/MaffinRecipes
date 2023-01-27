@@ -3,13 +3,18 @@ package com.maffin.recipes.ui.home;
 import android.content.Context;
 import android.view.View;
 
+import com.maffin.recipes.Config;
 import com.maffin.recipes.R;
+import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
 
 import java.util.List;
 
 public class HomeAdapter extends AbstractListAdapter {
+
+    /** Шаблон URL-а для загрузки изображений. */
+    private static final String URL_TEMPLATE = Config.BASE_URL + "/images/receipt-%d-image.png";
 
     /**
      * Конструктор.
@@ -62,5 +67,8 @@ public class HomeAdapter extends AbstractListAdapter {
                 holder.getEnergy().setVisibility(View.GONE);
             }
         }
+        // Запускаем загрузку картинки
+        String url = String.format(URL_TEMPLATE, receipt.getId());
+        ImageManager.fetchImage(url, holder.getThumbnail(), R.drawable.ic_cooking_chef_opacity);
     }
 }

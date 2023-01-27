@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 /**
@@ -18,39 +21,100 @@ import android.widget.ImageView;
  * См.: https://habr.com/ru/post/78747/
  */
 public class ImageManager {
+    /** Тег для логирования. */
     private final static String TAG = "ImageManager";
+    /** Кэш загруженных изображений. */
+    private final static HashMap<String, Bitmap> BITMAP_HASH_MAP = new HashMap<>();
+    /** Очередь загрузки изображений. */
+    private final static HashMap<ImageView, String> IMAGE_QUEUE = new HashMap<>();
 
-    /** Private constructor prevents instantiation from other classes */
+
+    /** Приватный конструктор для предотвращения создания инстанса. */
     private ImageManager () {}
 
+    /**
+     * Загрузка изображения.
+     * @param iUrl      адрес
+     * @param iView     ImageView, получатель изображения
+     * @param stub      ID ресурса, заглушка, на случай, если изображние не удалось загрузить
+     *                  -1, если надо скрыть ImageView при отсутствии изображения
+     */
     public static void fetchImage(final String iUrl, final ImageView iView, final int stub) {
+        // Если URL или ImageView не определены,
         if ( iUrl == null || iView == null )
             return;
 
-        final Handler handler = new Handler() {
-            @Override
-            public void handleMessage(Message message) {
-                final Bitmap image = (Bitmap) message.obj;
-                iView.setImageBitmap(image);
-            }
-        };
+        // Сохраним пару в очереди
+        IMAGE_QUEUE.put(iView, iUrl);
 
+        // Создаем поток загрузки изображения
         final Thread thread = new Thread() {
             @Override
             public void run() {
-                final Bitmap image = downloadImage(iUrl);
-                if ( image != null ) {
-                    Log.v(TAG, "Got image by URL: " + iUrl);
-                    final Message message = handler.obtainMessage(1, image);
+                Looper.prepare();
+
+                // Создадим обработчик, который заменит картинку в ImageView при завршении загрузки
+                final Handler handler = new Handler(Looper.getMainLooper()) {
+                    @Override
+                    public void handleMessage(Message message) {
+                        // Проверяем какой URL последним был заявлен на загрузку в ImageView
+                        String currentUrl = IMAGE_QUEUE.get(iView);
+                        if (!iUrl.equals(currentUrl)) {
+                            Log.v(TAG, "ImageView переиспользован в другой загрузке: " + currentUrl);
+                            return;
+                        }
+                        // Извлекаем из сообщения картинку
+                        final Bitmap image = (Bitmap) message.obj;
+                        // Вставляем картинку в ImageView и делаем его видимым
+                        iView.setImageBitmap(image);
+                        iView.setVisibility(View.VISIBLE);
+                        // Убираем ImageView из очереди
+                        IMAGE_QUEUE.remove(iView);
+                    }
+                };
+
+                // Проверяем, может наша картинка уже а кэше?
+                if (BITMAP_HASH_MAP.containsKey(iUrl)) {
+                    Log.v(TAG, "Изображени найдено в кэше. URL: " + iUrl);
+                    // Передаем изображение а handler для отрисовки в UI
+                    final Message message = handler.obtainMessage(1, BITMAP_HASH_MAP.get(iUrl));
                     handler.sendMessage(message);
+                } else {
+                    // Проверяем, может наша картинка ране была сохранена в файловой системе телефона?
+                    // ...
+                    // Картинка не известная, надо загружать из сети
+                    final Bitmap image = downloadImage(iUrl);
+                    if (image != null) {
+                        Log.v(TAG, "Изображение загружено по URL: " + iUrl);
+                        // Добавляем картинку в кэш
+                        BITMAP_HASH_MAP.put(iUrl, image);
+                        // Передаем изображение а handler для отрисовки в UI
+                        final Message message = handler.obtainMessage(1, image);
+                        handler.sendMessage(message);
+                        // Сохраняем картинку в файловой системе для переиспользования в будущем
+                        // ...
+                    }
                 }
+                Looper.loop();
             }
         };
-        iView.setImageResource(stub);
+        // Пока картинка грузится в отдельном потоке, подложим вместо нее заглушку или скроем
+        if (stub == -1) {
+            iView.setVisibility(View.GONE);
+        } else {
+            iView.setVisibility(View.VISIBLE);
+            iView.setImageResource(stub);
+        }
+        // Устанавливаем потоку загрузки низкий приоритет и запускаем его на выполнение
         thread.setPriority(3);
         thread.start();
     }
 
+    /**
+     * Загрузка изображения с сервера.
+     * @param iUrl  адрес картинки
+     * @return  картинка
+     */
     public static Bitmap downloadImage(String iUrl) {
         Bitmap bitmap = null;
         HttpURLConnection conn = null;
