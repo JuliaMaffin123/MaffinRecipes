@@ -15,7 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.maffin.recipes.Config;
-import com.maffin.recipes.DetailActivity;
+import com.maffin.recipes.ui.detail.DetailActivity;
 import com.maffin.recipes.databinding.FragmentHomeBinding;
 import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
@@ -67,7 +67,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // Загружаем данные из базы
+        // Загружаем данные из сети
         homeViewModel.loadData();
     }
 
@@ -76,7 +76,7 @@ public class HomeFragment extends Fragment {
      * @param position  позиция в списке
      * @param id        ID рецепта
      */
-    public void startDetailActivity(int position, long id) {
+    private void startDetailActivity(int position, long id) {
         Log.d(TAG, "position: " + position + " id: " + id);
         Intent intent = new Intent(getContext(), DetailActivity.class);
         intent.putExtra(Config.RECEIPT_ID, id);
