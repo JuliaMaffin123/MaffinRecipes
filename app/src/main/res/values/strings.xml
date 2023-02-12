@@ -2,6 +2,9 @@
     <string name="app_name">Рецепты на заметку</string>
     <string name="nav_header_title">Рецепты на заметку</string>
     <string name="action_search">Поиск</string>
+    <string name="action_share">Поделиться</string>
+    <string name="action_favorite">Избранное</string>
+    <string name="action_cart">Корзина</string>
 
     <string name="menu_home">Рецепты</string>
     <string name="menu_favorite">Избранное</string>

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.maffin.recipes.databinding.ActivityDetailBinding;
 import com.maffin.recipes.network.ImageManager;
@@ -46,8 +47,20 @@ public class DetailActivity extends AppCompatActivity {
     public boolean  onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // При нажатии на кнопку возврата закрываем активность и возвращаемся на главный экран
+                // Нажата кнопка НАЗАД
                 finish();
+                return true;
+            case R.id.action_share:
+                // Нажата кнопка ПОДЕЛИТЬСЯ
+                Toast.makeText(getApplicationContext(), "ПОДЕЛИТЬСЯ", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.action_favorite:
+                // Нажата кнопка ИЗБРАННОЕ
+                Toast.makeText(getApplicationContext(), "ИЗБРАННОЕ", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.action_cart:
+                // Нажата кнопка КОРЗИНА
+                Toast.makeText(getApplicationContext(), "КОРЗИНА", Toast.LENGTH_LONG).show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -55,6 +68,8 @@ public class DetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail, menu);
         return true;
     }
+
 }
