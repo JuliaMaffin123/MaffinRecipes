@@ -30,7 +30,7 @@ public class ImageManager {
     /** Кэш загруженных изображений. */
     private final static HashMap<String, Bitmap> BITMAP_HASH_MAP = new HashMap<>();
     /** Очередь загрузки изображений. */
-    private final static HashMap<ImageView, String> IMAGE_QUEUE = new HashMap<>();
+    private final static HashMap<View, String> IMAGE_QUEUE = new HashMap<>();
 
 
     /** Приватный конструктор для предотвращения создания инстанса. */

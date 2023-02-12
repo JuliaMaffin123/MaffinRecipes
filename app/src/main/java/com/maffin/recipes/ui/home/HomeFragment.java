@@ -9,19 +9,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.maffin.recipes.Config;
 import com.maffin.recipes.DetailActivity;
 import com.maffin.recipes.databinding.FragmentHomeBinding;
-import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.network.Receipt;
-import com.maffin.recipes.ui.favorite.FavoriteAdapter;
-import com.maffin.recipes.ui.favorite.FavoriteViewModel;
+import com.maffin.recipes.ui.adapter.AbstractListAdapter;
 
 /**
  * Фрагмент для отображения списка рецептов.
@@ -52,7 +49,10 @@ public class HomeFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                startDetailActivity(position, id);
+                // Зная view - элемент списка, получим из него холдер с данными
+                final AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) view.getTag();
+                // Запускаем активность и передаем в нее ID рецепта
+                startDetailActivity(position, holder.getId());
             }
         });
         return binding.getRoot();
@@ -71,9 +71,15 @@ public class HomeFragment extends Fragment {
         homeViewModel.loadData();
     }
 
+    /**
+     * Запуск активности с деталями рецепта.
+     * @param position  позиция в списке
+     * @param id        ID рецепта
+     */
     public void startDetailActivity(int position, long id) {
         Log.d(TAG, "position: " + position + " id: " + id);
         Intent intent = new Intent(getContext(), DetailActivity.class);
+        intent.putExtra(Config.RECEIPT_ID, id);
         startActivity(intent);
     }
 }

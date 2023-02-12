@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.maffin.recipes.databinding.ActivityDetailBinding;
+import com.maffin.recipes.network.ImageManager;
 
 /**
  * Активность для отображения детальной информации о рецепте.
@@ -15,8 +16,13 @@ import com.maffin.recipes.databinding.ActivityDetailBinding;
  */
 public class DetailActivity extends AppCompatActivity {
 
+    /** Шаблон URL-а для загрузки изображений. */
+    private static final String URL_TEMPLATE = Config.BASE_URL + "/images/receipt-%d-image.png";
+
     /** Разметка активности. */
     private ActivityDetailBinding binding;
+    /** ID рецепта. */
+    private long id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +32,14 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         // Добавляем кнопку возврата на главный экран
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // Извлекаем ID рецепта из Extras
+        id = getIntent().getLongExtra(Config.RECEIPT_ID, -1);
+        // Устанавливаем фоново изображение
+        if (id > 0) {
+            // Запускаем загрузку картинки
+            String url = String.format(URL_TEMPLATE, id);
+            ImageManager.fetchImage(getApplicationContext(), url, binding.detailBackgroundImage, R.drawable.ic_cooking_chef_opacity);
+        }
     }
 
     @Override
