@@ -1,12 +1,9 @@
 package com.maffin.recipes;
 
-import android.app.FragmentManager;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
-import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -19,17 +16,20 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.maffin.recipes.databinding.ActivityMainBinding;
-import com.maffin.recipes.ui.search.SearchFragment;
 
+/**
+ * Главная активность с фрагментами: Рецепты, Избранное, Список покупок, Поиск.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    /** Разметка активности. */
     private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        // Инициализируем разметку
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

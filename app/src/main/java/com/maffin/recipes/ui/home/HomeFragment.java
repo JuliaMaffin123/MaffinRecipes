@@ -1,5 +1,6 @@
 package com.maffin.recipes.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.maffin.recipes.DetailActivity;
 import com.maffin.recipes.databinding.FragmentHomeBinding;
 import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.network.Receipt;
@@ -50,7 +52,7 @@ public class HomeFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Log.d(TAG, "position: " + position + " id: " + id);
+                startDetailActivity(position, id);
             }
         });
         return binding.getRoot();
@@ -67,5 +69,11 @@ public class HomeFragment extends Fragment {
         super.onResume();
         // Загружаем данные из базы
         homeViewModel.loadData();
+    }
+
+    public void startDetailActivity(int position, long id) {
+        Log.d(TAG, "position: " + position + " id: " + id);
+        Intent intent = new Intent(getContext(), DetailActivity.class);
+        startActivity(intent);
     }
 }
