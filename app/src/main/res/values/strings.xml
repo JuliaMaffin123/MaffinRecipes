@@ -23,4 +23,7 @@
     <string name="template_time">[time-icon] %1$d м</string>
     <string name="holder_energy">[energy-icon]</string>
     <string name="template_energy">[energy-icon] %1$d кКал</string>
+
+    <string name="tab_components">Ингредиенты</string>
+    <string name="tab_steps">Приготовление</string>
 </resources>

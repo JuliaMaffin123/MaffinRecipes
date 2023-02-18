@@ -4,10 +4,16 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.view.MenuItem;
 import android.widget.TextView;
 
+import androidx.annotation.ColorRes;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
+/**
+ * Вспомогательный класс для управления визуальными элементами.
+ */
 public class DrawUtils {
 
     private DrawUtils() {}
@@ -33,5 +39,18 @@ public class DrawUtils {
         textView.setText(ssb, TextView.BufferType.SPANNABLE);
     }
 
-
+    /**
+     * Меняет цвет иконок в меню.
+     * @param context   контекст
+     * @param item      элемент меню
+     * @param color     цвет
+     */
+    public static void tintMenuIcon(Context context, MenuItem item, @ColorRes int color) {
+        if (item != null) {
+            Drawable normalDrawable = item.getIcon();
+            Drawable wrapDrawable = DrawableCompat.wrap(normalDrawable);
+            DrawableCompat.setTint(wrapDrawable, context.getResources().getColor(color));
+            item.setIcon(wrapDrawable);
+        }
+    }
 }

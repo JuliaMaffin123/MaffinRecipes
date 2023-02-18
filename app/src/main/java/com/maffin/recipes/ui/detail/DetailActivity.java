@@ -1,25 +1,18 @@
 package com.maffin.recipes.ui.detail;
 
-import androidx.annotation.ColorRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager.widget.ViewPager;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.tabs.TabLayout;
 import com.maffin.recipes.App;
 import com.maffin.recipes.Config;
 import com.maffin.recipes.R;
@@ -30,16 +23,13 @@ import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.ui.draw.DrawUtils;
-import com.maffin.recipes.ui.draw.VerticalImageSpan;
-import com.maffin.recipes.ui.home.HomeAdapter;
-import com.maffin.recipes.ui.home.HomeViewModel;
 
 /**
  * Активность для отображения детальной информации о рецепте.
  *
  * См. как добавить кнопку back в заголовок: https://stackoverflow.com/questions/14545139/android-back-button-in-the-title-bar
  */
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
     /** TAG для логирования. */
     private static final String TAG = "DetailActivity";
 
@@ -60,7 +50,15 @@ public class DetailActivity extends AppCompatActivity {
     private MenuItem favoriteMenuItem;
     /** Модель данных фрагмента. */
     private DetailViewModel detailViewModel;
+    /** Ссылка на разметку вкладок. */
+    private TabLayout tabLayout;
+    /** Компонент управления вкладками. */
+    private ViewPager viewPager;
 
+    /**
+     * Срабатывает при создании активности.
+     * @param savedInstanceState    окружение с сохраненным состоянием активности
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +81,8 @@ public class DetailActivity extends AppCompatActivity {
         favorite = getFavorite(id);
         // Инициализируем модель данных
         detailViewModel = new ViewModelProvider(this).get(DetailViewModel.class);
-        // Навешиваем прослушку на изменение данных в модели данных. Когда модель получит данные из БД,
-        // прослушка через адаптер загрузит список в ListView
+        // Навешиваем прослушку на изменение данных в модели данных.
+        // Когда модель получит данные с сервера, прослушка заменит описание рецепта
         detailViewModel.getReceipt().observe(this, r -> {
             receipt = r;
             // Название рецепта
@@ -114,32 +112,56 @@ public class DetailActivity extends AppCompatActivity {
                 binding.receiptEnergy.setVisibility(View.GONE);
             }
         });
-
 //        final ListView listView = binding.list;
 //        listView.setEmptyView(binding.empty);
 //        homeViewModel.getList().observe(getViewLifecycleOwner(), receipts -> {
 //            ArrayAdapter<Receipt> adapter = new HomeAdapter(getContext(), receipts);
 //            listView.setAdapter(adapter);
 //        });
+
+        // Инициализируем вкладки
+        tabLayout = binding.tabLayout;
+        viewPager = binding.pager;
+        // Добавляем на разметку две вкладки
+        tabLayout.addTab(tabLayout.newTab().setText("Ингредиенты"));
+        tabLayout.addTab(tabLayout.newTab().setText("Приготовление"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        // Инициализируем адаптер
+        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        // Передаем адаптер компоненту для управления
+        viewPager.setAdapter(adapter);
+        // Добавляем прослушку onTabSelectedListener
+        tabLayout.setOnTabSelectedListener(this);
     }
 
+    /**
+     * Срабатывает при восстановлении активности.
+     */
     @Override
     public void onResume() {
         super.onResume();
-        // Загружаем данные из сети
+        // Загружаем данные
         detailViewModel.loadReceipt(id);
         //detailViewModel.loadComponents(id);
         //detailViewModel.loadSteps(id);
     }
 
+    /**
+     * Срабатывает при уничтожении активности.
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         binding = null;
     }
 
+    /**
+     * Срабатывает при клик на пункт меню (в нашем случае на кнопки в ActionBar).
+     * @param item  пункт меню
+     * @return
+     */
     @Override
-    public boolean  onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Нажата кнопка НАЗАД
@@ -162,6 +184,11 @@ public class DetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Срабатывает при создании меню.
+     * @param menu  мею
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Инициируем разметку
@@ -193,25 +220,10 @@ public class DetailActivity extends AppCompatActivity {
     private void changeColorMenuFavorite(Favorite favorite) {
         if (favorite == null) {
             // Записи нет в избранном: белый цвет
-            tintMenuIcon(DetailActivity.this, favoriteMenuItem, android.R.color.white);
+            DrawUtils.tintMenuIcon(DetailActivity.this, favoriteMenuItem, android.R.color.white);
         } else {
             // Записи в избранном: другой цвет
-            tintMenuIcon(DetailActivity.this, favoriteMenuItem, android.R.color.holo_orange_dark);
-        }
-    }
-
-    /**
-     * Меняет цвет иконок в меню.
-     * @param context   контекст
-     * @param item      элемент меню
-     * @param color     цвет
-     */
-    public static void tintMenuIcon(Context context, MenuItem item, @ColorRes int color) {
-        if (item != null) {
-            Drawable normalDrawable = item.getIcon();
-            Drawable wrapDrawable = DrawableCompat.wrap(normalDrawable);
-            DrawableCompat.setTint(wrapDrawable, context.getResources().getColor(color));
-            item.setIcon(wrapDrawable);
+            DrawUtils.tintMenuIcon(DetailActivity.this, favoriteMenuItem, android.R.color.holo_orange_dark);
         }
     }
 
@@ -238,4 +250,33 @@ public class DetailActivity extends AppCompatActivity {
         changeColorMenuFavorite(favorite);
     }
 
+    /**
+     * Срабатывает при выборе вкладки.
+     * См. TabLayout.OnTabSelectedListener
+     * @param tab   вкладка
+     */
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        viewPager.setCurrentItem(tab.getPosition());
+    }
+
+    /**
+     * Срабатывает, когда вкладка теряет фокус.
+     * См. TabLayout.OnTabSelectedListener
+     * @param tab   вкладка
+     */
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    /**
+     * Срабатывает при повторном выборе вкладки.
+     * См. TabLayout.OnTabSelectedListener
+     * @param tab   вкладка
+     */
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
 }
