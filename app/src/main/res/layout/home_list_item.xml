@@ -14,7 +14,7 @@
 
     <!-- Первая строка -->
     <TextView
-        android:id="@+id/receiptName"
+        android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignStart="@id/thumbnail"
@@ -43,7 +43,7 @@
         android:padding="3sp">
 
         <TextView
-            android:id="@+id/receiptTime"
+            android:id="@+id/description1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
@@ -53,10 +53,10 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/receiptEnergy"
+            android:id="@+id/description2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/receiptTime"
+            android:layout_toEndOf="@id/description1"
             android:ellipsize="marquee"
             android:singleLine="true"
             android:text="@string/stub_receipt_energy"

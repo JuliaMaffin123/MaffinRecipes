@@ -26,4 +26,9 @@
 
     <string name="tab_components">Ингредиенты</string>
     <string name="tab_steps">Приготовление</string>
+    <string name="empty_components">Какой-то странный рецепт из ничего :)</string>
+    <string name="empty_steps">Какой-то странный рецепт, который не надо готовить :)</string>
+    <string name="stub_component_name">Пример названия ингредиента</string>
+    <string name="stub_component_count">1 шт</string>
+    <string name="action_component_check">Добавить в корзину</string>
 </resources>

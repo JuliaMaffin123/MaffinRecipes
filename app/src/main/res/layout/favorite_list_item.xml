@@ -17,7 +17,7 @@
 
     <!-- Кнопка удаления -->
     <ImageView
-        android:id="@+id/deleteFromFavorite"
+        android:id="@+id/action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -29,23 +29,23 @@
 
     <!-- Первая строка -->
     <TextView
-        android:id="@+id/receiptName"
+        android:id="@+id/name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@id/thumbnail"
-        android:layout_toStartOf="@id/deleteFromFavorite"
+        android:layout_toStartOf="@id/action"
         android:gravity="center_vertical"
         android:textSize="14sp"
         android:text="@string/stub_receipt_name" />
 
     <!-- Вторая строка -->
     <TextView
-        android:id="@+id/receiptTime"
+        android:id="@+id/description1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/receiptName"
+        android:layout_below="@id/name"
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@id/thumbnail"
         android:paddingRight="10dp"
@@ -55,12 +55,12 @@
         android:text="@string/stub_receipt_time" />
 
     <TextView
-        android:id="@+id/receiptEnergy"
+        android:id="@+id/description2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/receiptName"
+        android:layout_below="@id/name"
         android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@id/receiptTime"
+        android:layout_toEndOf="@id/description1"
         android:ellipsize="marquee"
         android:singleLine="true"
         android:textSize="10sp"

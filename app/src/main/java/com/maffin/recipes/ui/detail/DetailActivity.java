@@ -22,6 +22,7 @@ import com.maffin.recipes.db.dao.FavoriteDao;
 import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
+import com.maffin.recipes.ui.detail.components.TabComponents;
 import com.maffin.recipes.ui.draw.DrawUtils;
 
 /**
@@ -278,5 +279,13 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    /**
+     * Возвращает ID рецепта.
+     * @return
+     */
+    public long getReceiptId() {
+        return id;
     }
 }

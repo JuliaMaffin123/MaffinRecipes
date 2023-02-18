@@ -28,7 +28,7 @@ public class FavoriteAdapter extends AbstractListAdapter {
     }
 
     @Override
-    public void onDeleteClick(View v) {
+    public void onActionClick(View v) {
         View listItem = (View) v.getParent();
         ListView listView = (ListView) listItem.getParent();
         int position = listView.getPositionForView(listItem);
@@ -51,33 +51,33 @@ public class FavoriteAdapter extends AbstractListAdapter {
             holder.getName().setText(receipt.receiptName);
         }
         // Время приготовления рецепта
-        if (holder.getTime() != null) {
+        if (holder.getDescription1() != null) {
             int receiptTime = receipt.receiptTime;
             if (receiptTime > 0) {
-                holder.getTime().setVisibility(View.VISIBLE);
-                holder.getTime().setText(context.getString(R.string.template_time, receiptTime));
-                DrawUtils.spanImageIntoText(context, holder.getTime(),
+                holder.getDescription1().setVisibility(View.VISIBLE);
+                holder.getDescription1().setText(context.getString(R.string.template_time, receiptTime));
+                DrawUtils.spanImageIntoText(context, holder.getDescription1(),
                         context.getString(R.string.holder_time),
                         R.drawable.ic_baseline_access_time_24,
                         context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
                         context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
             } else {
-                holder.getTime().setVisibility(View.GONE);
+                holder.getDescription1().setVisibility(View.GONE);
             }
         }
         // Калорийность рецепта
-        if (holder.getEnergy() != null) {
+        if (holder.getDescription2() != null) {
             int receiptKkal = receipt.receiptKkal;
             if (receiptKkal > 0) {
-                holder.getEnergy().setVisibility(View.VISIBLE);
-                holder.getEnergy().setText(context.getString(R.string.template_energy, receiptKkal));
-                DrawUtils.spanImageIntoText(context, holder.getEnergy(),
+                holder.getDescription2().setVisibility(View.VISIBLE);
+                holder.getDescription2().setText(context.getString(R.string.template_energy, receiptKkal));
+                DrawUtils.spanImageIntoText(context, holder.getDescription2(),
                         context.getString(R.string.holder_energy),
                         R.drawable.ic_baseline_fastfood_24,
                         context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
                         context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
             } else {
-                holder.getEnergy().setVisibility(View.GONE);
+                holder.getDescription2().setVisibility(View.GONE);
             }
         }
         // Запускаем загрузку картинки

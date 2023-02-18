@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent" >
+
+    <!-- Выбрано -->
+    <ImageView
+        android:id="@+id/action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="10dip"
+        android:contentDescription="@string/action_component_check"
+        android:src="@drawable/ic_baseline_radio_button_unchecked_24" />
+
+    <!-- Количество -->
+    <TextView
+        android:id="@+id/description1"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:paddingEnd="10dp"
+        android:text="@string/stub_component_count"
+        android:textSize="14sp"
+        android:layout_toStartOf="@id/action" />
+
+    <!-- Наименование -->
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10sp"
+        android:layout_marginTop="10sp"
+        android:layout_marginEnd="10sp"
+        android:layout_marginBottom="10sp"
+        android:text="@string/stub_component_name"
+        android:textSize="14sp"
+        android:padding="3sp"
+        android:layout_toStartOf="@id/action" />
+
+
+
+</RelativeLayout>

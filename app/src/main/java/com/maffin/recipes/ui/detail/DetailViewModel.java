@@ -65,6 +65,7 @@ public class DetailViewModel extends ViewModel {
 
     /**
      * Загрузка рецепта из базы данных.
+     * @param id    ID рецепта
      */
     public void loadReceipt(long id) {
         // Реализация запроса через Retrofit

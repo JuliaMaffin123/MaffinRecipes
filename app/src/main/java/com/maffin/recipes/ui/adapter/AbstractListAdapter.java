@@ -24,13 +24,13 @@ import java.util.List;
  */
 public abstract class AbstractListAdapter extends ArrayAdapter {
     /** Ссылка на объек, конвертирующий шаблон в отображаемые элементы. */
-    private final LayoutInflater mInflater;
+    protected final LayoutInflater mInflater;
     /** интерфейс к глобальной информации о среде приложений. */
-    private Context mContext;
+    protected Context mContext;
     /** Список с данными для адаптера. */
-    private List mData;
+    protected List mData;
     /** ID ресурса с шаблоном элемента списка. */
-    private int mResource;
+    protected int mResource;
 
     /**
      * Конструктор.
@@ -40,7 +40,7 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
      * @param list      список с данными для адаптера
      */
     public AbstractListAdapter(final Context context, int resource, final List list) {
-        super(context, resource, R.id.receiptName, list);
+        super(context, resource, R.id.name, list);
         mInflater = LayoutInflater.from(context);
         mContext = context;
         mData = list;
@@ -95,15 +95,15 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
         // Создаем представление элемента списка по разметке
         final View view = mInflater.inflate(mResource, parent, false);
         // Получаем ссылки на составные части элемента списка и сохранеям их в холдере
-        holder.mName = view.findViewById(R.id.receiptName);
-        holder.mTime = view.findViewById(R.id.receiptTime);
-        holder.mEnergy = view.findViewById(R.id.receiptEnergy);
+        holder.mName = view.findViewById(R.id.name);
+        holder.mDescription1 = view.findViewById(R.id.description1);
+        holder.mDescription2 = view.findViewById(R.id.description2);
         holder.mThumbnail = view.findViewById(R.id.thumbnail);
-        holder.mDeleteFromFavorite = view.findViewById(R.id.deleteFromFavorite);
+        holder.mAction = view.findViewById(R.id.action);
 
-        // Навешиваем обработчик нажатия кнопки удаления
-        if (holder.mDeleteFromFavorite != null) {
-            holder.mDeleteFromFavorite.setOnClickListener(v -> onDeleteClick(v));
+        // Навешиваем обработчик нажатия кнопки действия
+        if (holder.mAction != null) {
+            holder.mAction.setOnClickListener(v -> onActionClick(v));
         }
 
         // Сохраняем ссылку на холдер в тэге представления
@@ -112,10 +112,10 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
     }
 
     /**
-     * Абстрактный метод. Вызывается при нажатии на кнопку удаления из списка.
+     * Абстрактный метод. Вызывается при нажатии на кнопку действия из списка.
      * @param v ссылка на View кнопки
      */
-    public void onDeleteClick(View v) {
+    public void onActionClick(View v) {
         // По умолчанию ничего не выполняется
     };
 
@@ -135,14 +135,14 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
         private long 		mId;
         /** Поле вывода наименования рецепта. */
         private TextView 	mName;
-        /** Поле вывода времени приготовления рецепта. */
-        private TextView 	mTime;
-        /** Поле вывода кКал рецепта. */
-        private TextView 	mEnergy;
+        /** Поле вывода дополнительного описания 1. */
+        private TextView 	mDescription1;
+        /** Поле вывода дополнительного описания 2. */
+        private TextView 	mDescription2;
         /** Миниатюра с картинкой рецепта. */
         private ImageView   mThumbnail;
-        /** Иконка удаления из избранного. */
-        private ImageView   mDeleteFromFavorite;
+        /** Иконка дополнительного действия. */
+        private ImageView   mAction;
 
         /**
          * Возвращает ID рецепта.
@@ -166,20 +166,24 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
             return mName;
         }
 
-        public TextView getTime() {
-            return mTime;
+        public void setName(TextView name) {
+            mName = name;
         }
 
-        public TextView getEnergy() {
-            return mEnergy;
+        public TextView getDescription1() {
+            return mDescription1;
+        }
+
+        public TextView getDescription2() {
+            return mDescription2;
         }
 
         public ImageView getThumbnail() {
             return mThumbnail;
         }
 
-        public ImageView getDeleteFromFavorite() {
-            return mDeleteFromFavorite;
+        public ImageView getAction() {
+            return mAction;
         }
     }
 }
