@@ -19,7 +19,57 @@
         android:id="@+id/detail_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:background="@drawable/rounded_bg"
+        android:layout_marginTop="200dp" >
+
+        <!-- Название рецепта -->
+        <TextView
+            android:id="@+id/receipt_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_marginHorizontal="15dp"
+            android:text="@string/stub_receipt_name"
+            android:textSize="20sp"
+            />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <!-- Вторая строка -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="10sp"
+            android:layout_marginEnd="10sp"
+            android:layout_marginBottom="10sp"
+            android:padding="3sp">
+
+            <TextView
+                android:id="@+id/receiptTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:paddingEnd="10dp"
+                android:singleLine="true"
+                android:text="@string/stub_receipt_time"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/receiptEnergy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/receiptTime"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:text="@string/stub_receipt_energy"
+                android:textSize="14sp" />
+        </RelativeLayout>
     </LinearLayout>
 
 </RelativeLayout>

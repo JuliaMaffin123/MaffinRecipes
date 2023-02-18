@@ -1,9 +1,6 @@
 package com.maffin.recipes.ui.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
-
 import com.maffin.recipes.R;
-import com.maffin.recipes.db.entity.Favorite;
-import com.maffin.recipes.ui.draw.VerticalImageSpan;
 
 import java.util.List;
 
@@ -125,26 +118,6 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
     public void onDeleteClick(View v) {
         // По умолчанию ничего не выполняется
     };
-
-    /**
-     * Умеет добавлять иконку вместо placeholder-а в TextView.
-     * @param textView  ссылка на TextView
-     * @param atText    placeholder, который надо заменить на иконку
-     * @param imageId   ссылка на ресурс иконки
-     * @param imgWidth  ширина иконки
-     * @param imgHeight высота иконки
-     */
-    protected void spanImageIntoText(TextView textView, String atText, int imageId, int imgWidth, int imgHeight) {
-        String text = textView.getText().toString();
-        SpannableStringBuilder ssb = new SpannableStringBuilder(text);
-        Drawable drawable = ContextCompat.getDrawable(mContext, imageId);
-        drawable.mutate();
-        drawable.setBounds(0, 0, imgWidth, imgHeight);
-        int start = text.indexOf(atText);
-        VerticalImageSpan imageSpan = new VerticalImageSpan(drawable);
-        ssb.setSpan(imageSpan, start, start + atText.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-        textView.setText(ssb, TextView.BufferType.SPANNABLE);
-    }
 
     /**
      * Биндит в шаблон элемента списка данные из массива.

@@ -2,17 +2,22 @@ package com.maffin.recipes.ui.detail;
 
 import androidx.annotation.ColorRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.maffin.recipes.App;
@@ -24,6 +29,8 @@ import com.maffin.recipes.db.dao.FavoriteDao;
 import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
+import com.maffin.recipes.ui.draw.DrawUtils;
+import com.maffin.recipes.ui.draw.VerticalImageSpan;
 import com.maffin.recipes.ui.home.HomeAdapter;
 import com.maffin.recipes.ui.home.HomeViewModel;
 
@@ -78,7 +85,35 @@ public class DetailActivity extends AppCompatActivity {
         detailViewModel = new ViewModelProvider(this).get(DetailViewModel.class);
         // Навешиваем прослушку на изменение данных в модели данных. Когда модель получит данные из БД,
         // прослушка через адаптер загрузит список в ListView
-        detailViewModel.getReceipt().observe(this, r -> receipt = r);
+        detailViewModel.getReceipt().observe(this, r -> {
+            receipt = r;
+            // Название рецепта
+            binding.receiptName.setText(receipt.getName());
+            // Время приготовления
+            if (receipt.getTime() != 0) {
+                binding.receiptTime.setVisibility(View.VISIBLE);
+                binding.receiptTime.setText(getString(R.string.template_time, receipt.getTime()));
+                DrawUtils.spanImageIntoText(DetailActivity.this, binding.receiptTime,
+                        getString(R.string.holder_time),
+                        R.drawable.ic_baseline_access_time_24,
+                        getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
+                        getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
+            } else {
+                binding.receiptTime.setVisibility(View.GONE);
+            }
+            // Каллорийность
+            if (receipt.getEnergy() != 0) {
+                binding.receiptEnergy.setVisibility(View.VISIBLE);
+                binding.receiptEnergy.setText(getString(R.string.template_energy, receipt.getEnergy()));
+                DrawUtils.spanImageIntoText(DetailActivity.this, binding.receiptEnergy,
+                        getString(R.string.holder_energy),
+                        R.drawable.ic_baseline_fastfood_24,
+                        getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
+                        getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
+            } else {
+                binding.receiptEnergy.setVisibility(View.GONE);
+            }
+        });
 
 //        final ListView listView = binding.list;
 //        listView.setEmptyView(binding.empty);

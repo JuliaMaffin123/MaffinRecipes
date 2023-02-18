@@ -10,6 +10,7 @@ import com.maffin.recipes.R;
 import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
+import com.maffin.recipes.ui.draw.DrawUtils;
 
 import java.util.List;
 
@@ -55,7 +56,8 @@ public class FavoriteAdapter extends AbstractListAdapter {
             if (receiptTime > 0) {
                 holder.getTime().setVisibility(View.VISIBLE);
                 holder.getTime().setText(context.getString(R.string.template_time, receiptTime));
-                spanImageIntoText(holder.getTime(), context.getString(R.string.holder_time),
+                DrawUtils.spanImageIntoText(context, holder.getTime(),
+                        context.getString(R.string.holder_time),
                         R.drawable.ic_baseline_access_time_24,
                         context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
                         context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
@@ -69,7 +71,8 @@ public class FavoriteAdapter extends AbstractListAdapter {
             if (receiptKkal > 0) {
                 holder.getEnergy().setVisibility(View.VISIBLE);
                 holder.getEnergy().setText(context.getString(R.string.template_energy, receiptKkal));
-                spanImageIntoText(holder.getEnergy(), context.getString(R.string.holder_energy),
+                DrawUtils.spanImageIntoText(context, holder.getEnergy(),
+                        context.getString(R.string.holder_energy),
                         R.drawable.ic_baseline_fastfood_24,
                         context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
                         context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
