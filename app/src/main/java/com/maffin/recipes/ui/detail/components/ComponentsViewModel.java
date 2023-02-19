@@ -6,7 +6,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.maffin.recipes.App;
 import com.maffin.recipes.Config;
+import com.maffin.recipes.db.AppDatabase;
+import com.maffin.recipes.db.dao.CartDao;
+import com.maffin.recipes.db.entity.Cart;
 import com.maffin.recipes.network.Component;
 import com.maffin.recipes.network.ReceiptService;
 import com.maffin.recipes.network.ResponseSuccess;
@@ -27,10 +31,16 @@ public class ComponentsViewModel extends ViewModel {
     private static final String TAG = "ComponentsViewModel";
     /** Список ингредиентов. */
     private final MutableLiveData<List<Component>> mList;
+    /** Список ингредиентов, добавленных в корзину. */
+    private List<Cart> mCart;
+    /** База данных. */
+    private final AppDatabase db;
 
     public ComponentsViewModel() {
         // Инциализируем переменные, через которые будут передаваться данные в активность
         mList = new MutableLiveData<>();
+        // Инициализируем соединение с базой данных
+        db = App.getInstance().getDatabase();
     }
 
     /**
@@ -42,11 +52,23 @@ public class ComponentsViewModel extends ViewModel {
     }
 
     /**
+     * Возвращает список ингредиентов, добавленных в корзину.
+     * @return
+     */
+    public List<Cart> getCart() {
+        return mCart;
+    }
+
+    /**
      * Загрузка списка ингредиентов рецепта с сервера.
      * @param id    ID рецепта
      */
     public void loadData(long id) {
-        // Реализация запроса через Retrofit
+        // Подгружаем данные из локальной базы
+        CartDao dao = db.cartDao();
+        mCart = dao.getById(id);
+
+        // Запрашиваем данные об ингредиентах через Retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Config.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -60,7 +82,14 @@ public class ComponentsViewModel extends ViewModel {
                 if (response.isSuccessful()) {
                     // При успешном запросе извлекаем массив ингредиентов из ответа и передаем их на фрагмент через LiveData
                     ResponseSuccess<Component> body = response.body();
-                    mList.setValue(body.getData());
+                    List<Component> list = body.getData();
+                    // Добавляем последним элементом "Выбрать всё..."
+                    Component all = new Component();
+                    all.setId(-1);
+                    all.setName("Выбрать всё...");
+                    list.add(all);
+                    // Передаем данные в активность
+                    mList.setValue(list);
                 }
             }
 

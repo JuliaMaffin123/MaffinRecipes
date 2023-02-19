@@ -13,6 +13,9 @@ public class Cart {
     @ColumnInfo(name = "receipt_id")
     public long receiptId;
 
+    @ColumnInfo(name = "item_id")
+    public long itemId;
+
     @ColumnInfo(name = "item_name")
     public String itemName;
 
