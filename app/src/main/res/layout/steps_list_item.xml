@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent" >
+
+    <!-- Описание -->
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stub_receipt_name"
+        android:textSize="14sp"
+        android:padding="3sp"/>
+
+    <!-- Большая картинка рецепта -->
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="fill_parent"
+        android:layout_height="221sp"
+        android:src="@drawable/ic_cooking_chef_opacity"
+        android:contentDescription="@string/receipt_thumb"
+        android:gravity="center_horizontal"
+        android:layout_below="@id/name"/>
+</RelativeLayout>

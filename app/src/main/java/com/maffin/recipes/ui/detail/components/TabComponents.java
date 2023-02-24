@@ -241,6 +241,5 @@ public class TabComponents extends Fragment {
                         : R.drawable.ic_baseline_radio_button_unchecked_24);
             }
         }
-
     }
 }

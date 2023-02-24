@@ -22,7 +22,6 @@ import com.maffin.recipes.db.dao.FavoriteDao;
 import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
-import com.maffin.recipes.ui.detail.components.TabComponents;
 import com.maffin.recipes.ui.draw.DrawUtils;
 
 /**
@@ -113,12 +112,6 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
                 binding.receiptEnergy.setVisibility(View.GONE);
             }
         });
-//        final ListView listView = binding.list;
-//        listView.setEmptyView(binding.empty);
-//        homeViewModel.getList().observe(getViewLifecycleOwner(), receipts -> {
-//            ArrayAdapter<Receipt> adapter = new HomeAdapter(getContext(), receipts);
-//            listView.setAdapter(adapter);
-//        });
 
         // Инициализируем вкладки
         tabLayout = binding.tabLayout;
@@ -143,8 +136,6 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
         super.onResume();
         // Загружаем данные
         detailViewModel.loadReceipt(id);
-        //detailViewModel.loadComponents(id);
-        //detailViewModel.loadSteps(id);
     }
 
     /**
