@@ -288,4 +288,12 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
     public long getReceiptId() {
         return id;
     }
+
+    /**
+     * Возвращает информацию о рецепте.
+     * @return
+     */
+    public Receipt getReceipt() {
+        return receipt;
+    }
 }

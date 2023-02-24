@@ -10,8 +10,11 @@ import com.maffin.recipes.App;
 import com.maffin.recipes.Config;
 import com.maffin.recipes.db.AppDatabase;
 import com.maffin.recipes.db.dao.CartDao;
+import com.maffin.recipes.db.dao.CartReceiptDao;
 import com.maffin.recipes.db.entity.Cart;
+import com.maffin.recipes.db.entity.CartReceipt;
 import com.maffin.recipes.network.Component;
+import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.network.ReceiptService;
 import com.maffin.recipes.network.ResponseSuccess;
 
@@ -100,4 +103,98 @@ public class ComponentsViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Удаляет из корзины все элементы рецепта.
+     * @param id    ID рецепта
+     */
+    public void removeAllFromCart(long id) {
+        // Зачищаем список ингредиентов по рецепту
+        CartDao cartDao = db.cartDao();
+        cartDao.removeAll(id);
+    }
+
+    /**
+     * Удаляет из корзины один элемент по рецепту.
+     * @param id        ID рецепта
+     * @param itemId    ID элемента
+     */
+    public void removeFromCart(long id, long itemId) {
+        CartDao cartDao = db.cartDao();
+        cartDao.removeById(id, itemId);
+    }
+
+    /**
+     * Удаляет из корзины рецепт.
+     * @param id        ID рецепта
+     */
+    public void removeFromCart(long id) {
+        // Удаляем сам рецепт из таблицы
+        CartReceiptDao cartReceiptDao = db.cartReceiptDao();
+        cartReceiptDao.removeById(id);
+    }
+
+    /**
+     * Добавляет в корзину один ингредиент.
+     * @param id        ID рецепта
+     * @param component ингредиент
+     */
+    public void appendToCart(long id, Component component) {
+        // Преобразуем ингредиент в запись для БД
+        Cart cart = componentToCart(id, component);
+        // Вставляем запись
+        CartDao cartDao = db.cartDao();
+        cartDao.insert(cart);
+    }
+
+    /**
+     * Добавляет в корзину описание рецепта.
+     * @param id        ID рецепта
+     * @param receipt   рецепт
+     */
+    public void appendReceiptToCart(long id, Receipt receipt) {
+        // Проверяем есть ли же рецепт в корзине?
+        CartReceiptDao cartReceiptDao = db.cartReceiptDao();
+        CartReceipt cartReceipt = cartReceiptDao.getCartReceiptById(id);
+        if (cartReceipt == null) {
+            // Преобразуем рецепт в запись для БД
+            cartReceipt = receiptToCartReceipt(id, receipt);
+            // Вставляем запись
+            cartReceiptDao.insert(cartReceipt);
+        }
+    }
+
+    /**
+     * Конвертирует данные Receipt в CartReceipt.
+     * @param id        ID рецепта
+     * @param receipt   рецепт
+     * @return          преобразованный объект
+     */
+    private CartReceipt receiptToCartReceipt(long id, Receipt receipt) {
+        CartReceipt cartReceipt = new CartReceipt();
+        cartReceipt.receiptId = id;
+        cartReceipt.receiptName = receipt.getName();
+        return cartReceipt;
+    }
+
+    /**
+     * Конвертирует данные Component в Cart.
+     * @param id        ID рецепта
+     * @param component ингредиент
+     * @return          преобразованный объект
+     */
+    private Cart componentToCart(long id, Component component) {
+        Cart cart = new Cart();
+        if (component == null) {
+            // Кнопка "Добавить все"
+            cart.itemId = -1;
+            cart.receiptId = id;
+        } else {
+            cart.itemId = component.getId();
+            cart.receiptId = id;
+            cart.itemChk = false;
+            cart.itemCnt = component.getCount();
+            cart.itemName = component.getName();
+        }
+        return cart;
+    }
 }

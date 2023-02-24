@@ -19,6 +19,7 @@ import com.maffin.recipes.R;
 import com.maffin.recipes.databinding.TabComponentsBinding;
 import com.maffin.recipes.db.entity.Cart;
 import com.maffin.recipes.network.Component;
+import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
 import com.maffin.recipes.ui.detail.DetailActivity;
 
@@ -37,6 +38,8 @@ public class TabComponents extends Fragment {
     private ComponentsViewModel componentsViewModel;
     /** ID рецепта. */
     private long id;
+    /** Рецепт. */
+    private Receipt receipt;
     /** Список ингредиентов, добавленных в корзину. */
     private boolean[] itemToggled;
     /** Список ингридентов, полученных с сервера. */
@@ -45,7 +48,8 @@ public class TabComponents extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Получаем ID рецепта
-        id = ((DetailActivity) getActivity()).getReceiptId();
+        DetailActivity detailActivity = (DetailActivity) getActivity();
+        id = detailActivity.getReceiptId();
 
         // Инициализируем разметку фрагмента
         binding = TabComponentsBinding.inflate(inflater, container, false);
@@ -68,7 +72,7 @@ public class TabComponents extends Fragment {
                 Component component = componentList.get(i);
                 int id = component.getId();
                 for (Cart cart : cartList) {
-                    if (id == cart.id) {
+                    if (id == cart.itemId) {
                         itemToggled[i] = true;
                     }
                 }
@@ -110,49 +114,69 @@ public class TabComponents extends Fragment {
      * @param holder   контейнер с элементами представления для строки списка
      */
     private void switchInCart(int position, AbstractListAdapter.ViewHolder holder) {
-        long id = holder.getId();
-        Log.d(TAG, "Выбрана позиция: " + position + ", id: " + id);
+        long itemId = holder.getId();
+        Log.d(TAG, "Выбрана позиция: " + position + ", id: " + itemId);
         final ListView listView = binding.list;
         // Проверим, присутствует ли элемент списка в кэше?
         if (itemToggled[position]) {
             // Удаляем из списка
-            if (id == -1) {
+            if (itemId == -1) {
                 // Нажат элемент "Выбрать все", удаляем все элементы
                 itemToggled = new boolean[componentList.size()];
+                componentsViewModel.removeAllFromCart(id);
+                // Удяляем рецепт из списка рецептов в корзине
+                componentsViewModel.removeFromCart(id);
             } else {
                 // Удаляем один элемент и "Выбрать все"
                 itemToggled[position] = false;
+                componentsViewModel.removeFromCart(id, itemId);
                 itemToggled[componentList.size() - 1] = false;
+                componentsViewModel.removeFromCart(id, -1);
+                // Проверяем остались ли отмеченные элементы
+                boolean success = false;
+                for (int i = 0; i < componentList.size() - 1; i++) {
+                    if (itemToggled[i]) {
+                        success = true;
+                        break;
+                    }
+                }
+                // Если это удален последний элемент рецепта, убираем рецепт из списка
+                if (!success) {
+                    componentsViewModel.removeFromCart(id);
+                }
             }
         } else {
-            // Добавляем в списка
-            if (id == -1) {
+            // Загружаем рецепт из родительской активности
+            DetailActivity detailActivity = (DetailActivity) getActivity();
+            receipt = detailActivity.getReceipt();
+            // Добавляем в список
+            if (itemId == -1) {
                 // Нажат элемент "Выбрать все", добавляем все элементы
                 for (int i = 0; i < componentList.size(); i++) {
                     itemToggled[i] = true;
+                    Component component = (Component) listView.getItemAtPosition(i);
+                    componentsViewModel.appendToCart(id, component);
                 }
+                // Добавляем рецрпт в корзину
+                componentsViewModel.appendReceiptToCart(id, receipt);
             } else {
                 // Добавляем один элемент и "Выбрать все", если список наполнился
                 Component component = (Component) listView.getItemAtPosition(position);
                 itemToggled[position] = true;
+                componentsViewModel.appendToCart(id, component);
                 boolean success = true;
                 for (int i = 0; i < componentList.size() - 1; i++) {
                     success = success && itemToggled[i];
                 }
-                itemToggled[componentList.size() - 1] = success;
+                if (success) {
+                    itemToggled[componentList.size() - 1] = true;
+                    componentsViewModel.appendToCart(id, null);
+                }
+                // Добавляем рецрпт в корзину
+                componentsViewModel.appendReceiptToCart(id, receipt);
             }
         }
         showCheckers();
-    }
-
-    private Cart componentToCart(Component component) {
-        Cart cart = new Cart();
-        cart.itemId = component.getId();
-        cart.receiptId = component.getReceipt_id();
-        cart.itemChk = false;
-        cart.itemCnt = component.getCount();
-        cart.itemName = component.getName();
-        return cart;
     }
 
     /**
@@ -165,8 +189,8 @@ public class TabComponents extends Fragment {
         // Пробежимся по всему списку и изменим картинку выделения
         for (int i = 0; i < adapter.getCount(); i++) {
             AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) adapter.getView(i, null, listView).getTag();
-            ImageView action = holder.getAction();
-            action.setImageResource(itemToggled[i]
+            ImageView thumbnail = holder.getThumbnail();
+            thumbnail.setImageResource(itemToggled[i]
                     ? R.drawable.ic_baseline_radio_button_checked_24
                     : R.drawable.ic_baseline_radio_button_unchecked_24);
         }
@@ -211,8 +235,8 @@ public class TabComponents extends Fragment {
                 holder.getDescription1().setText(component.getCount());
             }
             // Отметка о добавлении в корзину
-            if (holder.getAction() != null) {
-                holder.getAction().setImageResource(itemToggled[position]
+            if (holder.getThumbnail() != null) {
+                holder.getThumbnail().setImageResource(itemToggled[position]
                         ? R.drawable.ic_baseline_radio_button_checked_24
                         : R.drawable.ic_baseline_radio_button_unchecked_24);
             }
