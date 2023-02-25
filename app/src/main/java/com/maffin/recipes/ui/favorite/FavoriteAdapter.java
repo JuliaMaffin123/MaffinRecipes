@@ -15,8 +15,11 @@ import com.maffin.recipes.ui.draw.DrawUtils;
 import java.util.List;
 
 public class FavoriteAdapter extends AbstractListAdapter {
+    /** TAG для логирования. */
+    private static final String TAG = "FavoriteAdapter";
     /** Шаблон URL-а для загрузки изображений. */
     private static final String URL_TEMPLATE = Config.BASE_URL + "/images/receipt-%d-thumbnail.png";
+
     /**
      * Конструктор.
      *
@@ -34,7 +37,7 @@ public class FavoriteAdapter extends AbstractListAdapter {
         int position = listView.getPositionForView(listItem);
         ViewHolder holder = (ViewHolder) listItem.getTag();
         long id = holder.getId();
-        Log.d("FavoriteAdapter", "Тапнули удаление на элементе: position=" + position + ", id=" + id);
+        Log.d(TAG, "Тапнули удаление на элементе: position=" + position + ", id=" + id);
     }
 
     @Override

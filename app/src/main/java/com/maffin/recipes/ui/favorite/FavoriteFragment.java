@@ -1,19 +1,24 @@
 package com.maffin.recipes.ui.favorite;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.maffin.recipes.Config;
 import com.maffin.recipes.databinding.FragmentFavoriteBinding;
 import com.maffin.recipes.db.entity.Favorite;
+import com.maffin.recipes.ui.adapter.AbstractListAdapter;
+import com.maffin.recipes.ui.detail.DetailActivity;
 
 /**
  * Фрагмент для отображения избранных рецептов.
@@ -47,7 +52,16 @@ public class FavoriteFragment extends ListFragment {
             ArrayAdapter<Favorite> adapter = new FavoriteAdapter(getContext(), favorites);
             listView.setAdapter(adapter);
         });
-
+        // Навешиваем прослушку на нажатие по элементу списка
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                // Зная view - элемент списка, получим из него холдер с данными
+                final AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) view.getTag();
+                // Запускаем активность и передаем в нее ID рецепта
+                startDetailActivity(position, holder.getId());
+            }
+        });
         return binding.getRoot();
     }
 
@@ -66,13 +80,14 @@ public class FavoriteFragment extends ListFragment {
     }
 
     /**
-     * Вызывается при нажатии на элемент списка удаления из избранного.
-     *
-     * @param view Объект, который был нажат
+     * Запуск активности с деталями рецепта.
+     * @param position  позиция в списке
+     * @param id        ID рецепта
      */
-    public void onDeleteClick(final View view) {
-        View parent = (View) view.getParent();
-        final int position = getListView().getPositionForView(parent);
-        Toast.makeText(view.getContext(), "Тапнули удаление на элементе " + position, Toast.LENGTH_LONG);
+    private void startDetailActivity(int position, long id) {
+        Log.d(TAG, "position: " + position + " id: " + id);
+        Intent intent = new Intent(getContext(), DetailActivity.class);
+        intent.putExtra(Config.RECEIPT_ID, id);
+        startActivity(intent);
     }
 }

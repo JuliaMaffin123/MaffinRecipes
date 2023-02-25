@@ -199,9 +199,12 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
         return true;
     }
 
+    /**
+     * отображает на бейдже число отмеченных ингредиентов.
+     * @param count число
+     */
     public void showComponentsCount(int count) {
         // Подсчитаем, сколько выбрано ингредиентов
-        Log.d(TAG, "Получен вызов на " + count);
         if (count < 0) {
             return;
         }
@@ -213,7 +216,6 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
                 else {
                     txtViewCount.setVisibility(View.VISIBLE);
                     txtViewCount.setText(Integer.toString(count));
-                    // supportInvalidateOptionsMenu();
                 }
             }
         });
