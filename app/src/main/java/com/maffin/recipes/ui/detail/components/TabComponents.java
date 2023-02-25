@@ -67,6 +67,7 @@ public class TabComponents extends Fragment {
             int size = componentList.size();
             itemToggled = new boolean[size];
             List<Cart> cartList = componentsViewModel.getCart();
+            int checked = 0;
             for (int i = 0; i < size; i++) {
                 itemToggled[i] = false;
                 Component component = componentList.get(i);
@@ -74,10 +75,12 @@ public class TabComponents extends Fragment {
                 for (Cart cart : cartList) {
                     if (id == cart.itemId) {
                         itemToggled[i] = true;
+                        checked++;
                     }
                 }
             }
-
+            // Отрисовываем счетчик выбранных элементов
+            detailActivity.showComponentsCount(checked == itemToggled.length ? checked - 1 : checked);
             // Инициализируем адаптер и список
             ArrayAdapter<Component> adapter = new LocalAdapter(getContext(), components);
             listView.setAdapter(adapter);
@@ -187,15 +190,22 @@ public class TabComponents extends Fragment {
         final ListView listView = binding.list;
         ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
         // Пробежимся по всему списку и изменим картинку выделения
+        int checked = 0;
         for (int i = 0; i < adapter.getCount(); i++) {
             AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) adapter.getView(i, null, listView).getTag();
             ImageView thumbnail = holder.getThumbnail();
-            thumbnail.setImageResource(itemToggled[i]
-                    ? R.drawable.ic_baseline_radio_button_checked_24
-                    : R.drawable.ic_baseline_radio_button_unchecked_24);
+            if (itemToggled[i]) {
+                thumbnail.setImageResource(R.drawable.ic_baseline_radio_button_checked_24);
+                checked++;
+            } else {
+                thumbnail.setImageResource(R.drawable.ic_baseline_radio_button_unchecked_24);
+            }
         }
         // Сообщим адаптеру, что данные в списке изменились и его надо обновить
         adapter.notifyDataSetChanged();
+        // Сообщим корневой активности об изменении числа выбранных элементов
+        DetailActivity detailActivity = (DetailActivity) getActivity();
+        detailActivity.showComponentsCount(checked == itemToggled.length ? checked - 1 : checked);
     }
 
     /**

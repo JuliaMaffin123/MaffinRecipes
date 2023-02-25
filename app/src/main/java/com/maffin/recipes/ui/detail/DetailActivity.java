@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
@@ -48,6 +49,10 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
     private Favorite favorite;
     /** Кнопка меню ИЗБРАННОЕ. */
     private MenuItem favoriteMenuItem;
+    /** Кнопка меню КОРЗИНА. */
+    private View cartMenuItem;
+    /** Счетчик выбранных элементов в корзине. */
+    private TextView txtViewCount;
     /** Модель данных фрагмента. */
     private DetailViewModel detailViewModel;
     /** Ссылка на разметку вкладок. */
@@ -187,9 +192,31 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
         getMenuInflater().inflate(R.menu.detail, menu);
         // Сохраняем ссылки на пункты меню, которыми хотим управлять программно
         favoriteMenuItem = menu.findItem(R.id.action_favorite);
+        cartMenuItem = menu.findItem(R.id.action_cart).getActionView();
+        txtViewCount = (TextView) cartMenuItem.findViewById(R.id.txtCount);
         // Отрисуем правильный цвет у кнопки меню
         changeColorMenuFavorite(favorite);
         return true;
+    }
+
+    public void showComponentsCount(int count) {
+        // Подсчитаем, сколько выбрано ингредиентов
+        Log.d(TAG, "Получен вызов на " + count);
+        if (count < 0) {
+            return;
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (count == 0)
+                    txtViewCount.setVisibility(View.GONE);
+                else {
+                    txtViewCount.setVisibility(View.VISIBLE);
+                    txtViewCount.setText(Integer.toString(count));
+                    // supportInvalidateOptionsMenu();
+                }
+            }
+        });
     }
 
     /**
@@ -212,10 +239,10 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
     private void changeColorMenuFavorite(Favorite favorite) {
         if (favorite == null) {
             // Записи нет в избранном: белый цвет
-            DrawUtils.tintMenuIcon(DetailActivity.this, favoriteMenuItem, android.R.color.white);
+            DrawUtils.tintMenuIcon(DetailActivity.this, favoriteMenuItem, R.color.white);
         } else {
             // Записи в избранном: другой цвет
-            DrawUtils.tintMenuIcon(DetailActivity.this, favoriteMenuItem, android.R.color.holo_orange_dark);
+            DrawUtils.tintMenuIcon(DetailActivity.this, favoriteMenuItem, R.color.orange);
         }
     }
 

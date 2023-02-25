@@ -18,5 +18,6 @@
         android:icon="@drawable/ic_baseline_shopping_cart_white_24"
         android:orderInCategory="200"
         android:title="@string/action_cart"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        app:actionLayout="@layout/notification_layout" />
 </menu>
