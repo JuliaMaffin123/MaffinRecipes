@@ -21,14 +21,21 @@ import com.maffin.recipes.databinding.ActivityMainBinding;
  * Главная активность с фрагментами: Рецепты, Избранное, Список покупок, Поиск.
  */
 public class MainActivity extends AppCompatActivity {
+    /** TAG для логирования. */
+    private static final String TAG = "MainActivity";
 
+    /** Конфигурация пунктов меню. */
     private AppBarConfiguration mAppBarConfiguration;
     /** Разметка активности. */
     private ActivityMainBinding binding;
+    /** Контроллер навигации. */
+    private NavController navController;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // Инициализируем разметку
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -49,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                 R.id.nav_home, R.id.nav_favorite, R.id.nav_cart, R.id.action_search)
                 .setOpenableLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
@@ -63,15 +70,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.onNavDestinationSelected(item, navController);
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
 }

@@ -4,18 +4,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.maffin.recipes.App;
 import com.maffin.recipes.Config;
+import com.maffin.recipes.MainActivity;
 import com.maffin.recipes.R;
 import com.maffin.recipes.databinding.ActivityDetailBinding;
 import com.maffin.recipes.db.AppDatabase;
@@ -23,6 +26,7 @@ import com.maffin.recipes.db.dao.FavoriteDao;
 import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
+import com.maffin.recipes.ui.cart.CartFragment;
 import com.maffin.recipes.ui.draw.DrawUtils;
 
 /**
@@ -153,6 +157,25 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
     }
 
     /**
+     * Срабатывает при подготовке меню для отображения.
+     * @param menu  меню
+     * @return
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Решаем проблему: пункты меню с переопределенным шаблоном не кликабельны
+        final MenuItem cartMenuItem = menu.findItem(R.id.action_cart);
+        RelativeLayout rootView = (RelativeLayout) cartMenuItem.getActionView();
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOptionsItemSelected(cartMenuItem);
+            }
+        });
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
      * Срабатывает при клик на пункт меню (в нашем случае на кнопки в ActionBar).
      * @param item  пункт меню
      * @return
@@ -170,12 +193,14 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
                 return true;
             case R.id.action_favorite:
                 // Нажата кнопка ИЗБРАННОЕ
-                toggleFavorite();
                 Toast.makeText(getApplicationContext(), "ИЗБРАННОЕ", Toast.LENGTH_LONG).show();
+                toggleFavorite();
                 return true;
             case R.id.action_cart:
                 // Нажата кнопка КОРЗИНА
                 Toast.makeText(getApplicationContext(), "КОРЗИНА", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(DetailActivity.this, MainActivity.class);
+                startActivity(i);
                 return true;
         }
         return super.onOptionsItemSelected(item);

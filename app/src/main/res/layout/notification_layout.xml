@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@android:style/Widget.ActionButton"
-    android:layout_width="wrap_content"
-    android:layout_height="fill_parent"
-    android:layout_gravity="center"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
     android:background="@android:color/transparent"
-    android:clickable="true"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:clickable="true">
 
-    <ImageView
-        android:id="@+id/hotlist_bell"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:contentDescription="Notification Icon"
-        android:gravity="center"
-        android:src="@drawable/ic_baseline_shopping_cart_white_24" />
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_gravity="center"
+        android:gravity="center" >
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/txtCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="0dp"
-        android:background="@drawable/rounded_badge"
-        android:gravity="center"
-        android:minWidth="17sp"
-        android:text="0"
-        android:textColor="@color/white"
-        android:textSize="12sp" />
+        <ImageView
+            android:id="@+id/imageCart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:contentDescription="Notification Icon"
+            android:gravity="center"
+            android:src="@drawable/ic_baseline_shopping_cart_white_24" />
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/txtCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="0dp"
+            android:background="@drawable/rounded_badge"
+            android:gravity="center"
+            android:minWidth="17sp"
+            android:text="0"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
 </RelativeLayout>
