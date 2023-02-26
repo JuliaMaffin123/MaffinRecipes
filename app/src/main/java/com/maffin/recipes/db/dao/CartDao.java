@@ -13,6 +13,9 @@ import java.util.List;
 @Dao
 public interface CartDao {
 
+    @Query("SELECT * FROM cart ORDER BY receipt_id, item_id")
+    List<Cart> getCart();
+
     @Query("SELECT * FROM cart WHERE receipt_id = :id")
     List<Cart> getById(long id);
 

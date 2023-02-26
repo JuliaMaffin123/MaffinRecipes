@@ -15,6 +15,7 @@
     <string name="action_delete_favorite">Удалить из избранного</string>
     <string name="empty_favorite">У Вас нет ни одного рецепта в «Избранном». Откройте понравившийся рецепт и нажмите сердечко в правом верхнем углу.</string>
     <string name="empty_home">К сожалению, нет связи с сервером. Проверьте интернет соединение.</string>
+    <string name="empty_cart">В корзину покупок еще ничего не добавлено. Откройте понравившийся рецепт и выберите ингредиенты, которые надо докупить.</string>
     <string name="stub_receipt_name">Пример названия рецепта</string>
     <string name="stub_receipt_time">(=) 10 м</string>
     <string name="stub_receipt_energy">(=) 100 Ккал</string>

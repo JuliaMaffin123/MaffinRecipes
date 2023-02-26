@@ -13,7 +13,7 @@ import java.util.List;
 @Dao
 public interface CartReceiptDao {
 
-    @Query("SELECT * FROM cart_receipt ORDER BY receipt_name")
+    @Query("SELECT * FROM cart_receipt ORDER BY receipt_id")
     List<CartReceipt> getCartReceipt();
 
     @Query("SELECT * FROM cart_receipt WHERE receipt_id = :id")

@@ -31,6 +31,25 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
     protected List mData;
     /** ID ресурса с шаблоном элемента списка. */
     protected int mResource;
+    /** ID ресурса с шаблоном группы элементов. */
+    protected int mGroupResource;
+
+    /**
+     * Конструктор.
+     *
+     * @param context   интерфейс к глобальной информации о среде приложений.
+     * @param group     ID макета группы элементов
+     * @param resource  ID макета элемента списка
+     * @param list      список с данными для адаптера
+     */
+    public AbstractListAdapter(final Context context, int group, int resource, final List list) {
+        super(context, resource, R.id.name, list);
+        mInflater = LayoutInflater.from(context);
+        mContext = context;
+        mData = list;
+        mGroupResource = group;
+        mResource = resource;
+    }
 
     /**
      * Конструктор.
@@ -45,6 +64,7 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
         mContext = context;
         mData = list;
         mResource = resource;
+        mGroupResource = resource;
     }
 
     /**
@@ -66,7 +86,7 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
     public View getView(final int position, final View view, final ViewGroup parent) {
         View convertView;
         if (view == null) {
-            convertView = newView(mContext, parent);
+            convertView = newView(mContext, parent, position);
         } else {
             convertView = view;
         }
@@ -85,15 +105,16 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
     /**
      * Создает новый объект (элемент списка) для просмотра данных.
      *
-     * @param context интерфейс к глобальной информации о среде приложений
-     * @param parent  ссылка на контейнер, в котором создается элемент списка, т.е. сам список
+     * @param context    интерфейс к глобальной информации о среде приложений
+     * @param parent     ссылка на контейнер, в котором создается элемент списка, т.е. сам список
+     * @param position   позиция в списке
      * @return созданный объект (элемент списка)
      */
-    public View newView(final Context context, final ViewGroup parent) {
+    public View newView(final Context context, final ViewGroup parent, final int position) {
         // Создаем объект для хранения ссылок на составные части элемента списка
         final ViewHolder holder = new ViewHolder();
         // Создаем представление элемента списка по разметке
-        final View view = mInflater.inflate(mResource, parent, false);
+        final View view = mInflater.inflate(getResource(position), parent, false);
         // Получаем ссылки на составные части элемента списка и сохранеям их в холдере
         holder.mName = view.findViewById(R.id.name);
         holder.mDescription1 = view.findViewById(R.id.description1);
@@ -109,6 +130,19 @@ public abstract class AbstractListAdapter extends ArrayAdapter {
         // Сохраняем ссылку на холдер в тэге представления
         view.setTag(holder);
         return view;
+    }
+
+    /**
+     * Возвращает ID шаблона в ресурсном файле.
+     * Если шаблон зависит от данных, например, рецепт как группа ингредиентов должен быть другого
+     * вида, тогда этот метод надо переопределить. Иначе для всех элементов будет использоваться
+     * mResource.
+     *
+     * @param position  позиция в списке
+     * @return
+     */
+    public int getResource(int position) {
+        return mResource;
     }
 
     /**
