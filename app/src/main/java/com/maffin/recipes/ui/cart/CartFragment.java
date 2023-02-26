@@ -2,16 +2,26 @@ package com.maffin.recipes.ui.cart;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.maffin.recipes.Config;
+import com.maffin.recipes.R;
 import com.maffin.recipes.databinding.FragmentCartBinding;
 import com.maffin.recipes.db.entity.Cart;
 import com.maffin.recipes.db.entity.CartReceipt;
@@ -30,9 +40,25 @@ public class CartFragment extends Fragment {
     /** Модель данных фрагмента. */
     private CartViewModel cartViewModel;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Разрешаем свое меню
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         // Инициализируем разметку фрагмента
         binding = FragmentCartBinding.inflate(inflater, container, false);
+
+        // Разрешаем показ заголовка
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+        // Явно задам кнопку меню и заголовок
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
+        toolbar.setTitle(R.string.menu_cart);
 
         // Инициализируем модель данных
         cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
@@ -72,6 +98,37 @@ public class CartFragment extends Fragment {
         super.onResume();
         // Загружаем данные из БД
         cartViewModel.loadData();
+    }
+
+    /**
+     * Срабатывает при создании меню.
+     * @param menu  мею
+     * @return
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        // Инициируем разметку
+        inflater.inflate(R.menu.cart, menu);
+    }
+
+    /**
+     * Срабатывает при клик на пункт меню (в нашем случае на кнопки в ActionBar).
+     * @param item  пункт меню
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        switch (item.getItemId()) {
+            case R.id.action_share:
+                // Нажата кнопка ПОДЕЛИТЬСЯ
+                Toast.makeText(getContext(), TAG + ": ПОДЕЛИТЬСЯ", Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

@@ -1,6 +1,10 @@
 package com.maffin.recipes.ui.detail;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -8,9 +12,12 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +27,7 @@ import com.maffin.recipes.App;
 import com.maffin.recipes.Config;
 import com.maffin.recipes.MainActivity;
 import com.maffin.recipes.R;
-import com.maffin.recipes.databinding.ActivityDetailBinding;
+import com.maffin.recipes.databinding.FragmentDetailBinding;
 import com.maffin.recipes.db.AppDatabase;
 import com.maffin.recipes.db.dao.FavoriteDao;
 import com.maffin.recipes.db.entity.Favorite;
@@ -34,7 +41,7 @@ import com.maffin.recipes.ui.draw.DrawUtils;
  *
  * См. как добавить кнопку back в заголовок: https://stackoverflow.com/questions/14545139/android-back-button-in-the-title-bar
  */
-public class DetailActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
+public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedListener {
     /** TAG для логирования. */
     private static final String TAG = "DetailActivity";
 
@@ -42,7 +49,7 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
     private static final String URL_TEMPLATE = Config.BASE_URL + "/images/receipt-%d-image.png";
 
     /** Разметка активности. */
-    private ActivityDetailBinding binding;
+    private FragmentDetailBinding binding;
     /** ID рецепта. */
     private long id;
     /** Информация о рецепте. */
@@ -65,24 +72,49 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
     private ViewPager viewPager;
 
     /**
+     * Конструктор для передачи параметров во фрагмент.
+     * @param id    ID рецепта
+     * @return
+     */
+    public static DetailFragment newInstance(long id) {
+        DetailFragment fragment = new DetailFragment();
+        Bundle args = new Bundle();
+        args.putLong(Config.RECEIPT_ID, id);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Получим аргументы вызова
+        id = getArguments().getLong(Config.RECEIPT_ID, 0);
+        // Разрешаем свое меню
+        setHasOptionsMenu(true);
+    }
+
+    /**
      * Срабатывает при создании активности.
      * @param savedInstanceState    окружение с сохраненным состоянием активности
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Инициализируем разметку
-        binding = ActivityDetailBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        binding = FragmentDetailBinding.inflate(inflater, container, false);
+
         // Добавляем кнопку возврата на главный экран
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        // Извлекаем ID рецепта из Extras
-        id = getIntent().getLongExtra(Config.RECEIPT_ID, -1);
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+
+        // Удаляем заголовок
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         // Устанавливаем фоново изображение
         if (id > 0) {
             // Запускаем загрузку картинки
             String url = String.format(URL_TEMPLATE, id);
-            ImageManager.fetchImage(getApplicationContext(), url, binding.detailBackgroundImage, R.drawable.ic_cooking_chef_opacity);
+            ImageManager.fetchImage(getContext(), url, binding.detailBackgroundImage, R.drawable.ic_cooking_chef_opacity);
         }
         // Инициализируем соединение с базой данных
         db = App.getInstance().getDatabase();
@@ -92,7 +124,7 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
         detailViewModel = new ViewModelProvider(this).get(DetailViewModel.class);
         // Навешиваем прослушку на изменение данных в модели данных.
         // Когда модель получит данные с сервера, прослушка заменит описание рецепта
-        detailViewModel.getReceipt().observe(this, r -> {
+        detailViewModel.getReceipt().observe(getViewLifecycleOwner(), r -> {
             receipt = r;
             // Название рецепта
             binding.receiptName.setText(receipt.getName());
@@ -100,7 +132,7 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
             if (receipt.getTime() != 0) {
                 binding.receiptTime.setVisibility(View.VISIBLE);
                 binding.receiptTime.setText(getString(R.string.template_time, receipt.getTime()));
-                DrawUtils.spanImageIntoText(DetailActivity.this, binding.receiptTime,
+                DrawUtils.spanImageIntoText(getContext(), binding.receiptTime,
                         getString(R.string.holder_time),
                         R.drawable.ic_baseline_access_time_24,
                         getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
@@ -112,7 +144,7 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
             if (receipt.getEnergy() != 0) {
                 binding.receiptEnergy.setVisibility(View.VISIBLE);
                 binding.receiptEnergy.setText(getString(R.string.template_energy, receipt.getEnergy()));
-                DrawUtils.spanImageIntoText(DetailActivity.this, binding.receiptEnergy,
+                DrawUtils.spanImageIntoText(getContext(), binding.receiptEnergy,
                         getString(R.string.holder_energy),
                         R.drawable.ic_baseline_fastfood_24,
                         getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
@@ -130,11 +162,13 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
         tabLayout.addTab(tabLayout.newTab().setText("Приготовление"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         // Инициализируем адаптер
-        PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        PagerAdapter adapter = new PagerAdapter(getParentFragmentManager(), tabLayout.getTabCount());
         // Передаем адаптер компоненту для управления
         viewPager.setAdapter(adapter);
         // Добавляем прослушку onTabSelectedListener
         tabLayout.setOnTabSelectedListener(this);
+
+        return binding.getRoot();
     }
 
     /**
@@ -159,10 +193,9 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
     /**
      * Срабатывает при подготовке меню для отображения.
      * @param menu  меню
-     * @return
      */
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public void onPrepareOptionsMenu(Menu menu) {
         // Решаем проблему: пункты меню с переопределенным шаблоном не кликабельны
         final MenuItem cartMenuItem = menu.findItem(R.id.action_cart);
         RelativeLayout rootView = (RelativeLayout) cartMenuItem.getActionView();
@@ -172,7 +205,7 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
                 onOptionsItemSelected(cartMenuItem);
             }
         });
-        return super.onPrepareOptionsMenu(menu);
+        super.onPrepareOptionsMenu(menu);
     }
 
     /**
@@ -182,26 +215,36 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         switch (item.getItemId()) {
             case android.R.id.home:
-                // Нажата кнопка НАЗАД
-                finish();
+                // Нажата кнопка НАЗАД. Восстанавливаем иконку меню
+                toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
+                // Восстанавливаем заголовок
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+                // Передаем управление прошлому фрагменту в стеке
+                getActivity().getSupportFragmentManager().popBackStack();
                 return true;
             case R.id.action_share:
                 // Нажата кнопка ПОДЕЛИТЬСЯ
-                Toast.makeText(getApplicationContext(), "ПОДЕЛИТЬСЯ", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), TAG + ": ПОДЕЛИТЬСЯ", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.action_favorite:
                 // Нажата кнопка ИЗБРАННОЕ
-                Toast.makeText(getApplicationContext(), "ИЗБРАННОЕ", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), TAG + ": ИЗБРАННОЕ", Toast.LENGTH_LONG).show();
                 toggleFavorite();
                 return true;
             case R.id.action_cart:
-                // Нажата кнопка КОРЗИНА
-                Toast.makeText(getApplicationContext(), "КОРЗИНА", Toast.LENGTH_LONG).show();
-                Intent i = new Intent(DetailActivity.this, MainActivity.class);
-                startActivity(i);
+                // Нажата кнопка КОРЗИНА.
+                Toast.makeText(getContext(), TAG + ": КОРЗИНА", Toast.LENGTH_LONG).show();
+                // Передаем управление корзине
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                CartFragment cartFragment = new CartFragment();
+                ft.replace(R.id.nav_host_fragment_content_main, cartFragment);
+                ft.commit();
                 return true;
+            default:
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -212,16 +255,16 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
      * @return
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         // Инициируем разметку
-        getMenuInflater().inflate(R.menu.detail, menu);
+        inflater.inflate(R.menu.detail, menu);
         // Сохраняем ссылки на пункты меню, которыми хотим управлять программно
         favoriteMenuItem = menu.findItem(R.id.action_favorite);
         cartMenuItem = menu.findItem(R.id.action_cart).getActionView();
         txtViewCount = (TextView) cartMenuItem.findViewById(R.id.txtCount);
         // Отрисуем правильный цвет у кнопки меню
         changeColorMenuFavorite(favorite);
-        return true;
     }
 
     /**
@@ -233,7 +276,7 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
         if (count < 0) {
             return;
         }
-        runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (count == 0)
@@ -266,10 +309,10 @@ public class DetailActivity extends AppCompatActivity implements TabLayout.OnTab
     private void changeColorMenuFavorite(Favorite favorite) {
         if (favorite == null) {
             // Записи нет в избранном: белый цвет
-            DrawUtils.tintMenuIcon(DetailActivity.this, favoriteMenuItem, R.color.white);
+            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.white);
         } else {
             // Записи в избранном: другой цвет
-            DrawUtils.tintMenuIcon(DetailActivity.this, favoriteMenuItem, R.color.orange);
+            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.orange);
         }
     }
 

@@ -17,7 +17,7 @@ import com.maffin.recipes.databinding.TabStepsBinding;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Step;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
-import com.maffin.recipes.ui.detail.DetailActivity;
+import com.maffin.recipes.ui.detail.DetailFragment;
 
 import java.util.List;
 
@@ -33,12 +33,28 @@ public class TabSteps extends Fragment {
     private StepsViewModel stepsViewModel;
     /** ID рецепта. */
     private long id;
+    /** Родительский фрагмент. */
+    private DetailFragment root;
+
+    /**
+     * Возвращает ссылку на родительский фрагмент.
+     * @return
+     */
+    public DetailFragment getRoot() {
+        List<Fragment> fragmentList = getParentFragmentManager().getFragments();
+        for (Fragment fragment : fragmentList) {
+            if (fragment instanceof DetailFragment) {
+                return (DetailFragment) fragment;
+            }
+        }
+        return null;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Получаем ID рецепта
-        DetailActivity detailActivity = (DetailActivity) getActivity();
-        id = detailActivity.getReceiptId();
+        root = getRoot();
+        id = root.getReceiptId();
 
         // Инициализируем разметку фрагмента
         binding = TabStepsBinding.inflate(inflater, container, false);

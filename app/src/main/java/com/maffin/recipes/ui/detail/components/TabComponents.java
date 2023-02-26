@@ -21,7 +21,7 @@ import com.maffin.recipes.db.entity.Cart;
 import com.maffin.recipes.network.Component;
 import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
-import com.maffin.recipes.ui.detail.DetailActivity;
+import com.maffin.recipes.ui.detail.DetailFragment;
 
 import java.util.List;
 
@@ -44,12 +44,28 @@ public class TabComponents extends Fragment {
     private boolean[] itemToggled;
     /** Список ингридентов, полученных с сервера. */
     private List<Component> componentList;
+    /** Родительский фрагмент. */
+    private DetailFragment root;
+
+    /**
+     * Возвращает ссылку на родительский фрагмент.
+     * @return
+     */
+    public DetailFragment getRoot() {
+        List<Fragment> fragmentList = getParentFragmentManager().getFragments();
+        for (Fragment fragment : fragmentList) {
+            if (fragment instanceof DetailFragment) {
+                return (DetailFragment) fragment;
+            }
+        }
+        return null;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Получаем ID рецепта
-        DetailActivity detailActivity = (DetailActivity) getActivity();
-        id = detailActivity.getReceiptId();
+        root = getRoot();
+        id = root.getReceiptId();
 
         // Инициализируем разметку фрагмента
         binding = TabComponentsBinding.inflate(inflater, container, false);
@@ -80,7 +96,7 @@ public class TabComponents extends Fragment {
                 }
             }
             // Отрисовываем счетчик выбранных элементов
-            detailActivity.showComponentsCount(checked == itemToggled.length ? checked - 1 : checked);
+            root.showComponentsCount(checked == itemToggled.length ? checked - 1 : checked);
             // Инициализируем адаптер и список
             ArrayAdapter<Component> adapter = new LocalAdapter(getContext(), components);
             listView.setAdapter(adapter);
@@ -150,8 +166,7 @@ public class TabComponents extends Fragment {
             }
         } else {
             // Загружаем рецепт из родительской активности
-            DetailActivity detailActivity = (DetailActivity) getActivity();
-            receipt = detailActivity.getReceipt();
+            receipt = root.getReceipt();
             // Добавляем в список
             if (itemId == -1) {
                 // Нажат элемент "Выбрать все", добавляем все элементы
@@ -204,8 +219,7 @@ public class TabComponents extends Fragment {
         // Сообщим адаптеру, что данные в списке изменились и его надо обновить
         adapter.notifyDataSetChanged();
         // Сообщим корневой активности об изменении числа выбранных элементов
-        DetailActivity detailActivity = (DetailActivity) getActivity();
-        detailActivity.showComponentsCount(checked == itemToggled.length ? checked - 1 : checked);
+        root.showComponentsCount(checked == itemToggled.length ? checked - 1 : checked);
     }
 
     /**

@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation"
+    android:id="@+id/main_navigation"
     app:startDestination="@+id/nav_home">
 
     <fragment
@@ -28,4 +28,10 @@
         android:name="com.maffin.recipes.ui.search.SearchFragment"
         android:label="@string/action_search"
         tools:layout="@layout/fragment_search" />
+
+    <fragment
+        android:id="@+id/nav_detail"
+        android:name="com.maffin.recipes.ui.detail.DetailFragment"
+        android:label="@string/menu_detail"
+        tools:layout="@layout/fragment_detail" />
 </navigation>

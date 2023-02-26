@@ -9,6 +9,7 @@
     <string name="menu_home">Рецепты</string>
     <string name="menu_favorite">Избранное</string>
     <string name="menu_cart">Список покупок</string>
+    <string name="menu_detail">Рецепт</string>
 
     <string name="receipt_thumb">Миниатюра рецепта</string>
     <string name="receipt_image">Большая картинка рецепта</string>
