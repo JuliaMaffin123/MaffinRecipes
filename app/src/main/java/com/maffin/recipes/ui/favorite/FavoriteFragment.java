@@ -80,6 +80,7 @@ public class FavoriteFragment extends ListFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Toast.makeText(getContext(), TAG + ": onItemClick", Toast.LENGTH_LONG).show();
                 // Зная view - элемент списка, получим из него холдер с данными
                 final AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) view.getTag();
                 // Запускаем активность и передаем в нее ID рецепта
