@@ -68,4 +68,17 @@ public class CartViewModel extends ViewModel {
         // Запоминаем отобранный список
         mList.setValue(cartReceipts);
     }
+
+    /**
+     * Переключает выделение элемента в базе.
+     * @param itemId    ID элемента списка
+     * @param chk       true/false
+     */
+    public void toggleChk(long itemId, boolean chk) {
+        CartDao cartDao = db.cartDao();
+        Cart cart = cartDao.getById(itemId);
+        cart.itemChk = chk;
+        cartDao.update(cart);
+        //cartDao.toggleChk(itemId, chk);
+    }
 }

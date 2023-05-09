@@ -1,6 +1,9 @@
 package com.maffin.recipes.ui.cart;
 
+import android.content.Context;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +29,8 @@ import com.maffin.recipes.R;
 import com.maffin.recipes.databinding.FragmentCartBinding;
 import com.maffin.recipes.db.entity.Cart;
 import com.maffin.recipes.db.entity.CartReceipt;
+import com.maffin.recipes.network.Component;
+import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
 
@@ -39,6 +45,8 @@ public class CartFragment extends Fragment {
     private FragmentCartBinding binding;
     /** Модель данных фрагмента. */
     private CartViewModel cartViewModel;
+    /** Список ингредиентов, добавленных в корзину. */
+    private boolean[] itemToggled;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,8 +76,19 @@ public class CartFragment extends Fragment {
         final ListView listView = binding.list;
         listView.setEmptyView(binding.empty);
         cartViewModel.getList().observe(getViewLifecycleOwner(), receipts -> {
-            List<Cart> cart = cartViewModel.getCart();
-            ArrayAdapter<Receipt> adapter = new CartAdapter(getContext(), magicConversion(receipts, cart));
+            // Загружаем из модели список компонентов
+            List<Cart> cartList = cartViewModel.getCart();
+            // Конвертируем список рецептов и компонентов в единую модель
+            List<Model> modelList = magicConversion(receipts, cartList);
+            // Определяем: какие записи были отмечены
+            int size = modelList.size();
+            itemToggled = new boolean[size];
+            for (int i = 0; i < size; i++) {
+                Model model = modelList.get(i);
+                itemToggled[i] = model.check;
+            }
+            // Инициализируем адаптер и список
+            ArrayAdapter<Receipt> adapter = new LocalCartAdapter(getContext(), modelList);
             listView.setAdapter(adapter);
         });
         // Навешиваем прослушку на нажатие по элементу списка
@@ -80,7 +99,7 @@ public class CartFragment extends Fragment {
                 final AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) view.getTag();
                 if (holder.getId() > -1) {
                     // Переключаем состояние элемента списка КУПЛЕН
-                    //toggleItem(position, holder.getId());
+                    toggleItem(position, holder);
                 }
             }
         });
@@ -152,6 +171,47 @@ public class CartFragment extends Fragment {
     }
 
     /**
+     * Переключает выделение элемента в списке.
+     * @param position  позиция элемента
+     * @param holder    холдер
+     */
+    private void toggleItem(int position, AbstractListAdapter.ViewHolder holder) {
+        long itemId = holder.getId();
+        Log.d(TAG, "Выбрана позиция: " + position + ", id: " + itemId);
+        if (itemId > 0) {
+            // Переключаем элемент в кэше и в таблице
+            boolean toggle = !itemToggled[position];
+            itemToggled[position] = toggle;
+            cartViewModel.toggleChk(itemId, toggle);
+            // Отрисовываем отметки
+            showCheckers();
+        }
+    }
+
+    /**
+     * Отображает изменение выделенных элементов списка.
+     */
+    private void showCheckers() {
+        // Получим ссылку на список и адаптер
+        final ListView listView = binding.list;
+        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+        // Пробежимся по всему списку и изменим картинку выделения
+        for (int i = 0; i < adapter.getCount(); i++) {
+            AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) adapter.getView(i, null, listView).getTag();
+            ImageView thumbnail = holder.getThumbnail();
+            if (thumbnail != null) {
+                if (itemToggled[i]) {
+                    thumbnail.setImageResource(R.drawable.ic_baseline_radio_button_checked_24);
+                } else {
+                    thumbnail.setImageResource(R.drawable.ic_baseline_radio_button_unchecked_24);
+                }
+            }
+        }
+        // Сообщим адаптеру, что данные в списке изменились и его надо обновить
+        adapter.notifyDataSetChanged();
+    }
+
+    /**
      * Модель данных для элемента списка.
      */
     public class Model {
@@ -182,6 +242,82 @@ public class CartFragment extends Fragment {
             this.name = cart.itemName;
             this.desc = cart.itemCnt;
             this.check = cart.itemChk;
+        }
+    }
+
+    public class LocalCartAdapter extends AbstractListAdapter {
+        /** TAG для логирования. */
+        private static final String TAG = "CartAdapter";
+        /** Шаблон URL-а для загрузки изображений. */
+        private static final String URL_TEMPLATE = Config.BASE_URL + "/images/receipt-%d-thumbnail.png";
+
+        /**
+         * Конструктор.
+         *
+         * @param context      интерфейс к глобальной информации о среде приложений.
+         * @param list         список рецептов и ингредиентов
+         */
+        public LocalCartAdapter(Context context, List<CartFragment.Model> list) {
+            super(context, R.layout.cart_receipt_list_item, R.layout.cart_list_item, list);
+        }
+
+        @Override
+        public void bindView(int position, View view) {
+            Context context = getContext();
+            // Получим ссылки на составные части шаблона
+            ViewHolder holder = (ViewHolder) view.getTag();
+            // Получим ссылку на запись (это элемент массива в соответствующей позиции)
+            final CartFragment.Model model = (CartFragment.Model) getData().get(position);
+            // Наполним строку данными
+            holder.setId(model.itemId);
+            // Наименование
+            TextView name = holder.getName();
+            if (name != null) {
+                name.setText(model.name);
+                if (model.check) {
+                    // Помеченные записи считам купленными и зачеркиваем
+                    name.setPaintFlags(name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                } else {
+                    // Флаг зачеркнтого текста можно убрать
+                    name.setPaintFlags(name.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                }
+            }
+            // Количество
+            TextView desc = holder.getDescription1();
+            if (desc != null) {
+                desc.setText(model.desc);
+            }
+            // Миниатюра
+            ImageView thumb = holder.getThumbnail();
+            if (thumb != null) {
+                if (model.itemId == -1) {
+                    // Это группирующая строка с названием рецепта, загружаем картинку
+                    if (model.id == -1) {
+                        thumb.setImageResource(R.drawable.ic_cook_thumb);
+                    } else {
+                        String url = String.format(URL_TEMPLATE, model.id);
+                        ImageManager.fetchImage(context, url, thumb, R.drawable.ic_cook_thumb);
+                    }
+                } else {
+                    // Это элемент списка, рисуем имитацию чекбокса
+                    thumb.setImageResource(itemToggled[position]
+                            ? R.drawable.ic_baseline_radio_button_checked_24
+                            : R.drawable.ic_baseline_radio_button_unchecked_24);
+                }
+            }
+            // Отключаем нажатие в группах
+            if (model.itemId == -1) {
+                view.setEnabled(false);
+                view.setClickable(false);
+            }
+        }
+
+        @Override
+        public int getResource(int position) {
+            // Получим ссылку на запись (это элемент массива в соответствующей позиции)
+            final CartFragment.Model model = (CartFragment.Model) getData().get(position);
+            // Если ID элемента списка == -1, значит это строка для группирующего названия рецепта
+            return (model.itemId == -1 ? mGroupResource : mResource);
         }
     }
 }

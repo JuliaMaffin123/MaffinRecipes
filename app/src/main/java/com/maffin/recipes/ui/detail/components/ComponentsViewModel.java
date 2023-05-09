@@ -69,7 +69,7 @@ public class ComponentsViewModel extends ViewModel {
     public void loadData(long id) {
         // Подгружаем данные из локальной базы
         CartDao dao = db.cartDao();
-        mCart = dao.getById(id);
+        mCart = dao.getByReceiptId(id);
 
         // Запрашиваем данные об ингредиентах через Retrofit
         Retrofit retrofit = new Retrofit.Builder()
