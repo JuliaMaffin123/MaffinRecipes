@@ -228,6 +228,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
             case R.id.action_share:
                 // Нажата кнопка ПОДЕЛИТЬСЯ
                 Toast.makeText(getContext(), TAG + ": ПОДЕЛИТЬСЯ", Toast.LENGTH_LONG).show();
+                shareReceipt();
                 return true;
             case R.id.action_favorite:
                 // Нажата кнопка ИЗБРАННОЕ
@@ -268,7 +269,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
     }
 
     /**
-     * отображает на бейдже число отмеченных ингредиентов.
+     * Отображает на бейдже число отмеченных ингредиентов.
      * @param count число
      */
     public void showComponentsCount(int count) {
@@ -383,5 +384,16 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
      */
     public Receipt getReceipt() {
         return receipt;
+    }
+
+    /**
+     * Публикует рецепт.
+     */
+    public void shareReceipt() {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
     }
 }

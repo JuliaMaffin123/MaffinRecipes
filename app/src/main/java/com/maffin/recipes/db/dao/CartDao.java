@@ -19,17 +19,14 @@ public interface CartDao {
     @Query("SELECT * FROM cart WHERE receipt_id = :id")
     List<Cart> getByReceiptId(long id);
 
-    @Query("SELECT * FROM cart WHERE item_id = :id")
-    Cart getById(long id);
+    @Query("SELECT * FROM cart WHERE item_id = :itemId")
+    Cart getByItemId(long itemId);
 
     @Query("DELETE FROM cart WHERE receipt_id = :id")
     void removeAll(long id);
 
     @Query("DELETE FROM cart WHERE receipt_id = :id and item_id = :itemId")
     void removeById(long id, long itemId);
-
-    @Query("UPDATE cart SET item_chk = :chk WHERE item_id = :itemId")
-    void toggleChk(long itemId, boolean chk);
 
     @Insert
     void insert(Cart cart);

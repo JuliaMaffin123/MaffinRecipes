@@ -45,7 +45,7 @@ public class CartFragment extends Fragment {
     private FragmentCartBinding binding;
     /** Модель данных фрагмента. */
     private CartViewModel cartViewModel;
-    /** Список ингредиентов, добавленных в корзину. */
+    /** Отметки ингредиентов (куплено/не куплено) в корзине. */
     private boolean[] itemToggled;
 
     @Override
@@ -97,6 +97,7 @@ public class CartFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 // Зная view - элемент списка, получим из него холдер с данными
                 final AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) view.getTag();
+                // Если нажат элемент, соответствующий рецепту (itemId=-1), то ничего не произойдет
                 if (holder.getId() > -1) {
                     // Переключаем состояние элемента списка КУПЛЕН
                     toggleItem(position, holder);
@@ -178,14 +179,12 @@ public class CartFragment extends Fragment {
     private void toggleItem(int position, AbstractListAdapter.ViewHolder holder) {
         long itemId = holder.getId();
         Log.d(TAG, "Выбрана позиция: " + position + ", id: " + itemId);
-        if (itemId > 0) {
-            // Переключаем элемент в кэше и в таблице
-            boolean toggle = !itemToggled[position];
-            itemToggled[position] = toggle;
-            cartViewModel.toggleChk(itemId, toggle);
-            // Отрисовываем отметки
-            showCheckers();
-        }
+        // Переключаем элемент в кэше и в таблице
+        boolean toggle = !itemToggled[position];
+        itemToggled[position] = toggle;
+        cartViewModel.toggleChk(itemId, toggle);
+        // Отрисовываем отметки
+        showCheckers();
     }
 
     /**
@@ -238,16 +237,21 @@ public class CartFragment extends Fragment {
          */
         public Model(Cart cart) {
             this.id = cart.receiptId;
-            this.itemId = cart.id;
+            this.itemId = cart.itemId;
             this.name = cart.itemName;
             this.desc = cart.itemCnt;
             this.check = cart.itemChk;
         }
     }
 
+    /**
+     * Адаптер для списка.
+     * Объявлен внутри фрагмента чтобы иметь доступ к массиву отмеченных элементов для правильной
+     * отрисовки "купленных" элементов списка.
+     */
     public class LocalCartAdapter extends AbstractListAdapter {
         /** TAG для логирования. */
-        private static final String TAG = "CartAdapter";
+        private static final String TAG = "LocalCartAdapter";
         /** Шаблон URL-а для загрузки изображений. */
         private static final String URL_TEMPLATE = Config.BASE_URL + "/images/receipt-%d-thumbnail.png";
 
@@ -274,7 +278,7 @@ public class CartFragment extends Fragment {
             TextView name = holder.getName();
             if (name != null) {
                 name.setText(model.name);
-                if (model.check) {
+                if (itemToggled[position]) {
                     // Помеченные записи считам купленными и зачеркиваем
                     name.setPaintFlags(name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
