@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -31,10 +32,15 @@ import com.maffin.recipes.databinding.FragmentDetailBinding;
 import com.maffin.recipes.db.AppDatabase;
 import com.maffin.recipes.db.dao.FavoriteDao;
 import com.maffin.recipes.db.entity.Favorite;
+import com.maffin.recipes.network.Component;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
+import com.maffin.recipes.network.Step;
 import com.maffin.recipes.ui.cart.CartFragment;
 import com.maffin.recipes.ui.draw.DrawUtils;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Активность для отображения детальной информации о рецепте.
@@ -46,7 +52,8 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
     private static final String TAG = "DetailActivity";
 
     /** Шаблон URL-а для загрузки изображений. */
-    private static final String URL_TEMPLATE = Config.BASE_URL + "/images/receipt-%d-image.png";
+    private static final String FILE_TEMPLATE = "receipt-%d-image.png";
+    private static final String URL_TEMPLATE = Config.BASE_URL + "/images/" + FILE_TEMPLATE;
 
     /** Разметка активности. */
     private FragmentDetailBinding binding;
@@ -54,6 +61,8 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
     private long id;
     /** Информация о рецепте. */
     private Receipt receipt;
+    private List<Component> components;
+    private List<Step> steps;
     /** База данных. */
     private AppDatabase db;
     /** Запись в таблице ИЗБРАННОЕ. */
@@ -153,7 +162,12 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 binding.receiptEnergy.setVisibility(View.GONE);
             }
         });
-
+        detailViewModel.getComponents().observe(getViewLifecycleOwner(), c -> {
+            components = c;
+        });
+        detailViewModel.getSteps().observe(getViewLifecycleOwner(), s -> {
+            steps = s;
+        });
         // Инициализируем вкладки
         tabLayout = binding.tabLayout;
         viewPager = binding.pager;
@@ -179,6 +193,8 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         super.onResume();
         // Загружаем данные
         detailViewModel.loadReceipt(id);
+        detailViewModel.loadComponents(id);
+        detailViewModel.loadSteps(id);
     }
 
     /**
@@ -390,10 +406,24 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
      * Публикует рецепт.
      */
     public void shareReceipt() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(receipt.getName() + "\n");
+        if (components != null) {
+            for (Component c : components) {
+                sb.append("• " + c.getName() + " " + c.getCount() + "\n");
+            }
+            sb.append("\n");
+        }
+        if (steps != null) {
+            for (Step s : steps) {
+                sb.append(s.getDescription() + "\n");
+            }
+        }
+
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-        sendIntent.setType("text/plain");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+        sendIntent.setType("text/html");
         startActivity(sendIntent);
     }
 }
