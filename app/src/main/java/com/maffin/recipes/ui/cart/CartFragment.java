@@ -278,7 +278,7 @@ public class CartFragment extends Fragment {
             TextView name = holder.getName();
             if (name != null) {
                 name.setText(model.name);
-                if (model.check) {
+                if (itemToggled[position]) {
                     // Помеченные записи считам купленными и зачеркиваем
                     name.setPaintFlags(name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
