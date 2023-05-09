@@ -76,7 +76,7 @@ public class CartViewModel extends ViewModel {
      */
     public void toggleChk(long itemId, boolean chk) {
         CartDao cartDao = db.cartDao();
-        Cart cart = cartDao.getById(itemId);
+        Cart cart = cartDao.getByItemId(itemId);
         cart.itemChk = chk;
         cartDao.update(cart);
         //cartDao.toggleChk(itemId, chk);
