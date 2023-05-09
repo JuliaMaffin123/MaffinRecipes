@@ -79,6 +79,5 @@ public class CartViewModel extends ViewModel {
         Cart cart = cartDao.getByItemId(itemId);
         cart.itemChk = chk;
         cartDao.update(cart);
-        //cartDao.toggleChk(itemId, chk);
     }
 }

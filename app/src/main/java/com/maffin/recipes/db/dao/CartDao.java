@@ -28,9 +28,6 @@ public interface CartDao {
     @Query("DELETE FROM cart WHERE receipt_id = :id and item_id = :itemId")
     void removeById(long id, long itemId);
 
-    @Query("UPDATE cart SET item_chk = :chk WHERE item_id = :itemId")
-    void toggleChk(long itemId, boolean chk);
-
     @Insert
     void insert(Cart cart);
 
