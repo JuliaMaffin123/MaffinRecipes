@@ -39,7 +39,6 @@ import com.maffin.recipes.network.Step;
 import com.maffin.recipes.ui.cart.CartFragment;
 import com.maffin.recipes.ui.draw.DrawUtils;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -243,18 +242,14 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 return true;
             case R.id.action_share:
                 // Нажата кнопка ПОДЕЛИТЬСЯ
-                Toast.makeText(getContext(), TAG + ": ПОДЕЛИТЬСЯ", Toast.LENGTH_LONG).show();
                 shareReceipt();
                 return true;
             case R.id.action_favorite:
                 // Нажата кнопка ИЗБРАННОЕ
-                Toast.makeText(getContext(), TAG + ": ИЗБРАННОЕ", Toast.LENGTH_LONG).show();
                 toggleFavorite();
                 return true;
             case R.id.action_cart:
                 // Нажата кнопка КОРЗИНА.
-                Toast.makeText(getContext(), TAG + ": КОРЗИНА", Toast.LENGTH_LONG).show();
-                // Передаем управление корзине
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 CartFragment cartFragment = new CartFragment();
                 ft.replace(R.id.nav_host_fragment_content_main, cartFragment);
