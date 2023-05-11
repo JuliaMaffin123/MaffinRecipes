@@ -321,10 +321,10 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
     private void changeColorMenuFavorite(Favorite favorite) {
         if (favorite == null) {
             // Записи нет в избранном: белый цвет
-            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.white);
+            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.md_theme_light_onPrimary);
         } else {
             // Записи в избранном: другой цвет
-            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.orange);
+            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.md_theme_light_error);
         }
     }
 

@@ -79,7 +79,7 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/md_theme_light_onPrimary"
             android:minHeight="?attr/actionBarSize"
             app:tabMode="fixed"
             app:tabIndicatorColor="?attr/colorPrimary"
