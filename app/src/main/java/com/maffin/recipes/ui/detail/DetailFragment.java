@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -21,12 +20,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.maffin.recipes.App;
 import com.maffin.recipes.Config;
-import com.maffin.recipes.MainActivity;
 import com.maffin.recipes.R;
 import com.maffin.recipes.databinding.FragmentDetailBinding;
 import com.maffin.recipes.db.AppDatabase;
