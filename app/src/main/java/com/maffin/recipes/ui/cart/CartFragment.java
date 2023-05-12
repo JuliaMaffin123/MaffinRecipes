@@ -1,6 +1,7 @@
 package com.maffin.recipes.ui.cart;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,13 +16,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.maffin.recipes.Config;
@@ -29,7 +28,6 @@ import com.maffin.recipes.R;
 import com.maffin.recipes.databinding.FragmentCartBinding;
 import com.maffin.recipes.db.entity.Cart;
 import com.maffin.recipes.db.entity.CartReceipt;
-import com.maffin.recipes.network.Component;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
@@ -47,6 +45,8 @@ public class CartFragment extends Fragment {
     private CartViewModel cartViewModel;
     /** Отметки ингредиентов (куплено/не куплено) в корзине. */
     private boolean[] itemToggled;
+    /** Список отображаемых элементов в корзине. */
+    List<Model> modelList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,7 +79,7 @@ public class CartFragment extends Fragment {
             // Загружаем из модели список компонентов
             List<Cart> cartList = cartViewModel.getCart();
             // Конвертируем список рецептов и компонентов в единую модель
-            List<Model> modelList = magicConversion(receipts, cartList);
+            modelList = magicConversion(receipts, cartList);
             // Определяем: какие записи были отмечены
             int size = modelList.size();
             itemToggled = new boolean[size];
@@ -143,7 +143,7 @@ public class CartFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_share:
                 // Нажата кнопка ПОДЕЛИТЬСЯ
-                Toast.makeText(getContext(), TAG + ": ПОДЕЛИТЬСЯ", Toast.LENGTH_LONG).show();
+                shareCart();
                 return true;
             default:
                 break;
@@ -208,6 +208,31 @@ public class CartFragment extends Fragment {
         }
         // Сообщим адаптеру, что данные в списке изменились и его надо обновить
         adapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Публикует корзину.
+     */
+    public void shareCart() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Список покупок:\n");
+        if (modelList != null) {
+            for (Model m : modelList) {
+                if (m.itemId == -1) {
+                    // Заголовок рецепта
+                    sb.append("\n" + m.name + "\n");
+                } else {
+                    // Ингредиент
+                    sb.append("• " + m.name + " " + m.desc + "\n");
+                }
+            }
+        }
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+        sendIntent.setType("text/html");
+        startActivity(sendIntent);
     }
 
     /**

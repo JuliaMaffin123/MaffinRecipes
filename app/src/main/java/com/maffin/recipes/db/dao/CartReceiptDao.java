@@ -23,11 +23,11 @@ public interface CartReceiptDao {
     void removeById(long id);
 
     @Insert
-    void insert(CartReceipt favorite);
+    void insert(CartReceipt cartReceipt);
 
     @Update
-    void update(CartReceipt favorite);
+    void update(CartReceipt cartReceipt);
 
     @Delete
-    void delete(CartReceipt favorite);
+    void delete(CartReceipt cartReceipt);
 }

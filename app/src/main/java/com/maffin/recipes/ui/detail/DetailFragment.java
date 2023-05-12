@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
@@ -20,21 +20,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.maffin.recipes.App;
 import com.maffin.recipes.Config;
-import com.maffin.recipes.MainActivity;
 import com.maffin.recipes.R;
 import com.maffin.recipes.databinding.FragmentDetailBinding;
 import com.maffin.recipes.db.AppDatabase;
 import com.maffin.recipes.db.dao.FavoriteDao;
 import com.maffin.recipes.db.entity.Favorite;
+import com.maffin.recipes.network.Component;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
-import com.maffin.recipes.ui.cart.CartFragment;
+import com.maffin.recipes.network.Step;
 import com.maffin.recipes.ui.draw.DrawUtils;
+
+import java.util.List;
 
 /**
  * Активность для отображения детальной информации о рецепте.
@@ -46,7 +47,8 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
     private static final String TAG = "DetailActivity";
 
     /** Шаблон URL-а для загрузки изображений. */
-    private static final String URL_TEMPLATE = Config.BASE_URL + "/images/receipt-%d-image.png";
+    private static final String FILE_TEMPLATE = "receipt-%d-image.png";
+    private static final String URL_TEMPLATE = Config.BASE_URL + "/images/" + FILE_TEMPLATE;
 
     /** Разметка активности. */
     private FragmentDetailBinding binding;
@@ -54,6 +56,8 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
     private long id;
     /** Информация о рецепте. */
     private Receipt receipt;
+    private List<Component> components;
+    private List<Step> steps;
     /** База данных. */
     private AppDatabase db;
     /** Запись в таблице ИЗБРАННОЕ. */
@@ -70,19 +74,6 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
     private TabLayout tabLayout;
     /** Компонент управления вкладками. */
     private ViewPager viewPager;
-
-    /**
-     * Конструктор для передачи параметров во фрагмент.
-     * @param id    ID рецепта
-     * @return
-     */
-    public static DetailFragment newInstance(long id) {
-        DetailFragment fragment = new DetailFragment();
-        Bundle args = new Bundle();
-        args.putLong(Config.RECEIPT_ID, id);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -153,7 +144,12 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 binding.receiptEnergy.setVisibility(View.GONE);
             }
         });
-
+        detailViewModel.getComponents().observe(getViewLifecycleOwner(), c -> {
+            components = c;
+        });
+        detailViewModel.getSteps().observe(getViewLifecycleOwner(), s -> {
+            steps = s;
+        });
         // Инициализируем вкладки
         tabLayout = binding.tabLayout;
         viewPager = binding.pager;
@@ -179,6 +175,8 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         super.onResume();
         // Загружаем данные
         detailViewModel.loadReceipt(id);
+        detailViewModel.loadComponents(id);
+        detailViewModel.loadSteps(id);
     }
 
     /**
@@ -218,31 +216,20 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         switch (item.getItemId()) {
             case android.R.id.home:
-                // Нажата кнопка НАЗАД. Восстанавливаем иконку меню
-                toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
-                // Восстанавливаем заголовок
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
                 // Передаем управление прошлому фрагменту в стеке
                 getActivity().getSupportFragmentManager().popBackStack();
                 return true;
             case R.id.action_share:
                 // Нажата кнопка ПОДЕЛИТЬСЯ
-                Toast.makeText(getContext(), TAG + ": ПОДЕЛИТЬСЯ", Toast.LENGTH_LONG).show();
                 shareReceipt();
                 return true;
             case R.id.action_favorite:
                 // Нажата кнопка ИЗБРАННОЕ
-                Toast.makeText(getContext(), TAG + ": ИЗБРАННОЕ", Toast.LENGTH_LONG).show();
                 toggleFavorite();
                 return true;
             case R.id.action_cart:
                 // Нажата кнопка КОРЗИНА.
-                Toast.makeText(getContext(), TAG + ": КОРЗИНА", Toast.LENGTH_LONG).show();
-                // Передаем управление корзине
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                CartFragment cartFragment = new CartFragment();
-                ft.replace(R.id.nav_host_fragment_content_main, cartFragment);
-                ft.commit();
+                Navigation.findNavController(getActivity().findViewById(R.id.detail_backgroundImage)).navigate(R.id.nav_cart);
                 return true;
             default:
                 break;
@@ -310,10 +297,10 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
     private void changeColorMenuFavorite(Favorite favorite) {
         if (favorite == null) {
             // Записи нет в избранном: белый цвет
-            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.white);
+            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.md_theme_light_onPrimary);
         } else {
             // Записи в избранном: другой цвет
-            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.orange);
+            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.md_theme_light_error);
         }
     }
 
@@ -390,10 +377,24 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
      * Публикует рецепт.
      */
     public void shareReceipt() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(receipt.getName() + "\n");
+        if (components != null) {
+            for (Component c : components) {
+                sb.append("• " + c.getName() + " " + c.getCount() + "\n");
+            }
+            sb.append("\n");
+        }
+        if (steps != null) {
+            for (Step s : steps) {
+                sb.append(s.getDescription() + "\n");
+            }
+        }
+
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-        sendIntent.setType("text/plain");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+        sendIntent.setType("text/html");
         startActivity(sendIntent);
     }
 }
