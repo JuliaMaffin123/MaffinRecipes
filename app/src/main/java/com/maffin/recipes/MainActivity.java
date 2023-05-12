@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.maffin.recipes.databinding.ActivityMainBinding;
 
 /**
- * Главная активность с фрагментами: Рецепты, Избранное, Список покупок, Поиск, Рецепт.
+ * Главная активность с фрагментами: Рецепты, Избранное, Список покупок.
  */
 public class MainActivity extends AppCompatActivity {
     /** TAG для логирования. */

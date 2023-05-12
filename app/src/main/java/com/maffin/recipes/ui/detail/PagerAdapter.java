@@ -8,7 +8,7 @@ import com.maffin.recipes.ui.detail.components.TabComponents;
 import com.maffin.recipes.ui.detail.steps.TabSteps;
 
 /**
- * Адаптер для наполнения контентом вкладок с активности детализации рецепта.
+ * Адаптер для наполнения контентом вкладок с фрагмента детализации рецепта.
  */
 public class PagerAdapter extends FragmentStatePagerAdapter {
 
