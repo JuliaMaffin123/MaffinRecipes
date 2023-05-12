@@ -12,7 +12,9 @@
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:dividerHeight="0dp"
+        android:divider="@android:color/transparent" />
 
     <TextView
         android:id="@android:id/empty"
