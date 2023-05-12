@@ -5,8 +5,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import com.maffin.recipes.App;
 import com.maffin.recipes.Config;
 import com.maffin.recipes.R;
+import com.maffin.recipes.db.AppDatabase;
+import com.maffin.recipes.db.dao.FavoriteDao;
 import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
@@ -38,6 +41,14 @@ public class FavoriteAdapter extends AbstractListAdapter {
         ViewHolder holder = (ViewHolder) listItem.getTag();
         long id = holder.getId();
         Log.d(TAG, "Тапнули удаление на элементе: position=" + position + ", id=" + id);
+        // Удаляем в базе фаворитов
+        AppDatabase db = App.getInstance().getDatabase();
+        FavoriteDao dao = db.favoriteDao();
+        Favorite favorite = dao.getById(id);
+        dao.delete(favorite);
+        // Перерисовываем адаптер
+        remove(getItem(position));
+        notifyDataSetChanged();
     }
 
     @Override
