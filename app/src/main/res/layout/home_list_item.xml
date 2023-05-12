@@ -21,7 +21,7 @@
             <ImageView
                 android:id="@+id/thumbnail"
                 android:layout_width="match_parent"
-                android:layout_height="210sp"
+                android:layout_height="200sp"
                 android:src="@drawable/ic_cooking_chef_opacity"
                 android:contentDescription="@string/receipt_thumb" />
 

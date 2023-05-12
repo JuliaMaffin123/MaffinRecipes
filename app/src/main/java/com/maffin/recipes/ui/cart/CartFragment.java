@@ -41,6 +41,9 @@ import com.maffin.recipes.ui.adapter.AbstractListAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Фрагмент для отображения списка покупок.
+ */
 public class CartFragment extends Fragment {
 
     /** TAG для логирования. */

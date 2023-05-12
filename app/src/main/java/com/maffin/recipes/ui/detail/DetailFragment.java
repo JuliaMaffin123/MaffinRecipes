@@ -38,7 +38,7 @@ import com.maffin.recipes.ui.draw.DrawUtils;
 import java.util.List;
 
 /**
- * Активность для отображения детальной информации о рецепте.
+ * Фрагмент для отображения детальной информации о рецепте.
  *
  * См. как добавить кнопку back в заголовок: https://stackoverflow.com/questions/14545139/android-back-button-in-the-title-bar
  */
@@ -150,19 +150,6 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         detailViewModel.getSteps().observe(getViewLifecycleOwner(), s -> {
             steps = s;
         });
-        // Инициализируем вкладки
-        tabLayout = binding.tabLayout;
-        viewPager = binding.pager;
-        // Добавляем на разметку две вкладки
-        tabLayout.addTab(tabLayout.newTab().setText("Ингредиенты"));
-        tabLayout.addTab(tabLayout.newTab().setText("Приготовление"));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        // Инициализируем адаптер
-        PagerAdapter adapter = new PagerAdapter(getParentFragmentManager(), tabLayout.getTabCount());
-        // Передаем адаптер компоненту для управления
-        viewPager.setAdapter(adapter);
-        // Добавляем прослушку onTabSelectedListener
-        tabLayout.setOnTabSelectedListener(this);
 
         return binding.getRoot();
     }
@@ -177,6 +164,20 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         detailViewModel.loadReceipt(id);
         detailViewModel.loadComponents(id);
         detailViewModel.loadSteps(id);
+        // Инициализируем вкладки
+        tabLayout = binding.tabLayout;
+        viewPager = binding.pager;
+        // Добавляем на разметку две вкладки
+        tabLayout.addTab(tabLayout.newTab().setText("Ингредиенты"));
+        tabLayout.addTab(tabLayout.newTab().setText("Приготовление"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        // Инициализируем адаптер
+        PagerAdapter adapter = new PagerAdapter(getParentFragmentManager(), tabLayout.getTabCount());
+        // Передаем адаптер компоненту для управления
+        viewPager.setAdapter(adapter);
+        // Добавляем прослушку onTabSelectedListener
+        tabLayout.setOnTabSelectedListener(this);
+
     }
 
     /**
