@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -37,7 +38,7 @@ import com.maffin.recipes.ui.search.SearchFragment;
  * См. статью про RelativeLayoute: https://developer.alexanderklimov.ru/android/layout/relativelayout.php
  * См. статью про кастомизацию элементов ListView: https://www.vogella.com/tutorials/AndroidListView/article.html
  */
-public class FavoriteFragment extends ListFragment {
+public class FavoriteFragment extends Fragment {
 
     /** TAG для логирования. */
     private static final String TAG = "FavoriteFragment";
@@ -80,7 +81,6 @@ public class FavoriteFragment extends ListFragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Toast.makeText(getContext(), TAG + ": onItemClick", Toast.LENGTH_LONG).show();
                 // Зная view - элемент списка, получим из него холдер с данными
                 final AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) view.getTag();
                 // Запускаем активность и передаем в нее ID рецепта
@@ -145,8 +145,10 @@ public class FavoriteFragment extends ListFragment {
      */
     private void startDetailActivity(int position, long id) {
         Log.d(TAG, "position: " + position + " id: " + id);
-        Intent intent = new Intent(getContext(), DetailFragment.class);
-        intent.putExtra(Config.RECEIPT_ID, id);
-        startActivity(intent);
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        DetailFragment detailFragment = DetailFragment.newInstance(id);
+        ft.replace(R.id.nav_host_fragment_content_main, detailFragment);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 }
