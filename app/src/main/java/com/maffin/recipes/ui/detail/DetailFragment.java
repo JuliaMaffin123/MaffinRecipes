@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
@@ -33,7 +33,6 @@ import com.maffin.recipes.network.Component;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.network.Step;
-import com.maffin.recipes.ui.cart.CartFragment;
 import com.maffin.recipes.ui.draw.DrawUtils;
 
 import java.util.List;
@@ -75,19 +74,6 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
     private TabLayout tabLayout;
     /** Компонент управления вкладками. */
     private ViewPager viewPager;
-
-    /**
-     * Конструктор для передачи параметров во фрагмент.
-     * @param id    ID рецепта
-     * @return
-     */
-    public static DetailFragment newInstance(long id) {
-        DetailFragment fragment = new DetailFragment();
-        Bundle args = new Bundle();
-        args.putLong(Config.RECEIPT_ID, id);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -230,10 +216,6 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         switch (item.getItemId()) {
             case android.R.id.home:
-                // Нажата кнопка НАЗАД. Восстанавливаем иконку меню
-                toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
-                // Восстанавливаем заголовок
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
                 // Передаем управление прошлому фрагменту в стеке
                 getActivity().getSupportFragmentManager().popBackStack();
                 return true;
@@ -247,10 +229,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 return true;
             case R.id.action_cart:
                 // Нажата кнопка КОРЗИНА.
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                CartFragment cartFragment = new CartFragment();
-                ft.replace(R.id.nav_host_fragment_content_main, cartFragment);
-                ft.commit();
+                Navigation.findNavController(getActivity().findViewById(R.id.detail_backgroundImage)).navigate(R.id.nav_cart);
                 return true;
             default:
                 break;

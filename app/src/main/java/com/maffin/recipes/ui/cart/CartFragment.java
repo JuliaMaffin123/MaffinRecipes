@@ -16,13 +16,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.maffin.recipes.Config;
@@ -30,10 +28,8 @@ import com.maffin.recipes.R;
 import com.maffin.recipes.databinding.FragmentCartBinding;
 import com.maffin.recipes.db.entity.Cart;
 import com.maffin.recipes.db.entity.CartReceipt;
-import com.maffin.recipes.network.Component;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
-import com.maffin.recipes.network.Step;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
 
 import java.util.ArrayList;

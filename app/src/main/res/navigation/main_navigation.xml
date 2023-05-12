@@ -9,13 +9,21 @@
         android:id="@+id/nav_home"
         android:name="com.maffin.recipes.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_detail"
+            app:destination="@id/nav_detail" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_favorite"
         android:name="com.maffin.recipes.ui.favorite.FavoriteFragment"
         android:label="@string/menu_favorite"
-        tools:layout="@layout/fragment_favorite" />
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_nav_favorite_to_nav_detail"
+            app:destination="@id/nav_detail" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_cart"
@@ -24,14 +32,12 @@
         tools:layout="@layout/fragment_cart" />
 
     <fragment
-        android:id="@+id/action_search"
-        android:name="com.maffin.recipes.ui.search.SearchFragment"
-        android:label="@string/action_search"
-        tools:layout="@layout/fragment_search" />
-
-    <fragment
         android:id="@+id/nav_detail"
         android:name="com.maffin.recipes.ui.detail.DetailFragment"
         android:label="@string/menu_detail"
-        tools:layout="@layout/fragment_detail" />
+        tools:layout="@layout/fragment_detail" >
+        <action
+            android:id="@+id/action_nav_detail_to_nav_cart"
+            app:destination="@id/nav_cart" />
+    </fragment>
 </navigation>

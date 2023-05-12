@@ -1,6 +1,5 @@
 package com.maffin.recipes.ui.favorite;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,23 +11,19 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.fragment.app.ListFragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.maffin.recipes.Config;
 import com.maffin.recipes.R;
 import com.maffin.recipes.databinding.FragmentFavoriteBinding;
 import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
-import com.maffin.recipes.ui.detail.DetailFragment;
-import com.maffin.recipes.ui.search.SearchFragment;
 
 /**
  * Фрагмент для отображения избранных рецептов.
@@ -60,13 +55,6 @@ public class FavoriteFragment extends Fragment {
         // Инициализируем разметку фрагмента
         binding = FragmentFavoriteBinding.inflate(inflater, container, false);
 
-        // Разрешаем показ заголовка
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        // Явно задам кнопку меню и заголовок
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
-        toolbar.setTitle(R.string.menu_favorite);
-
         // Инициализируем модель данных
         favoriteViewModel = new ViewModelProvider(this).get(FavoriteViewModel.class);
         // Навешиваем прослушку на изменение данных в модели данных. Когда модель получит данные из БД,
@@ -84,7 +72,7 @@ public class FavoriteFragment extends Fragment {
                 // Зная view - элемент списка, получим из него холдер с данными
                 final AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) view.getTag();
                 // Запускаем активность и передаем в нее ID рецепта
-                startDetailActivity(position, holder.getId());
+                startDetailActivity(view, position, holder.getId());
             }
         });
         return binding.getRoot();
@@ -102,6 +90,12 @@ public class FavoriteFragment extends Fragment {
         super.onResume();
         // Загружаем данные из базы
         favoriteViewModel.loadData();
+        // Разрешаем показ заголовка
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+        // Явно задам кнопку меню и заголовок
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
+        toolbar.setTitle(R.string.menu_favorite);
     }
 
     /**
@@ -123,32 +117,21 @@ public class FavoriteFragment extends Fragment {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                // Нажата кнопка ПОИСК
-                Toast.makeText(getContext(), TAG + ": ПОИСК", Toast.LENGTH_LONG).show();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                SearchFragment searchFragment = new SearchFragment();
-                ft.replace(R.id.nav_host_fragment_content_main, searchFragment);
-                ft.commit();
-                return true;
-            default:
-                break;
-        }
         return super.onOptionsItemSelected(item);
     }
 
     /**
      * Запуск активности с деталями рецепта.
+     * @param view      элемент, который породил событие
      * @param position  позиция в списке
      * @param id        ID рецепта
      */
-    private void startDetailActivity(int position, long id) {
+    private void startDetailActivity(View view, int position, long id) {
         Log.d(TAG, "position: " + position + " id: " + id);
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        DetailFragment detailFragment = DetailFragment.newInstance(id);
-        ft.replace(R.id.nav_host_fragment_content_main, detailFragment);
-        ft.addToBackStack(null);
-        ft.commit();
+        // Передаем параметр с ID рецепта
+        Bundle bundle = new Bundle();
+        bundle.putLong(Config.RECEIPT_ID, id);
+        // Переключаем фрагмент
+        Navigation.findNavController(view).navigate(R.id.nav_detail, bundle);
     }
 }
