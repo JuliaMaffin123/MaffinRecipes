@@ -203,9 +203,9 @@ public class CartFragment extends Fragment {
             ImageView thumbnail = holder.getThumbnail();
             if (thumbnail != null) {
                 if (itemToggled[i]) {
-                    thumbnail.setImageResource(R.drawable.ic_baseline_radio_button_checked_24);
+                    thumbnail.setImageResource(R.drawable.ic_baseline_check_box_24);
                 } else {
-                    thumbnail.setImageResource(R.drawable.ic_baseline_radio_button_unchecked_24);
+                    thumbnail.setImageResource(R.drawable.ic_baseline_check_box_outline_blank_24);
                 }
             }
         }
@@ -333,8 +333,8 @@ public class CartFragment extends Fragment {
                 } else {
                     // Это элемент списка, рисуем имитацию чекбокса
                     thumb.setImageResource(itemToggled[position]
-                            ? R.drawable.ic_baseline_radio_button_checked_24
-                            : R.drawable.ic_baseline_radio_button_unchecked_24);
+                            ? R.drawable.ic_baseline_check_box_24
+                            : R.drawable.ic_baseline_check_box_outline_blank_24);
                 }
             }
             // Отключаем нажатие в группах

@@ -210,10 +210,10 @@ public class TabComponents extends Fragment {
             AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) adapter.getView(i, null, listView).getTag();
             ImageView thumbnail = holder.getThumbnail();
             if (itemToggled[i]) {
-                thumbnail.setImageResource(R.drawable.ic_baseline_radio_button_checked_24);
+                thumbnail.setImageResource(R.drawable.ic_baseline_check_box_24);
                 checked++;
             } else {
-                thumbnail.setImageResource(R.drawable.ic_baseline_radio_button_unchecked_24);
+                thumbnail.setImageResource(R.drawable.ic_baseline_check_box_outline_blank_24);
             }
         }
         // Сообщим адаптеру, что данные в списке изменились и его надо обновить
@@ -261,8 +261,8 @@ public class TabComponents extends Fragment {
             // Отметка о добавлении в корзину
             if (holder.getThumbnail() != null) {
                 holder.getThumbnail().setImageResource(itemToggled[position]
-                        ? R.drawable.ic_baseline_radio_button_checked_24
-                        : R.drawable.ic_baseline_radio_button_unchecked_24);
+                        ? R.drawable.ic_baseline_check_box_24
+                        : R.drawable.ic_baseline_check_box_outline_blank_24);
             }
         }
     }

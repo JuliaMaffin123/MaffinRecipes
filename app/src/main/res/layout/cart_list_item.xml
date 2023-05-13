@@ -13,7 +13,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="10dip"
         android:contentDescription="@string/action_component_check"
-        android:src="@drawable/ic_baseline_radio_button_unchecked_24" />
+        android:src="@drawable/ic_baseline_check_box_outline_blank_24" />
 
     <!-- Количество -->
     <TextView
