@@ -15,19 +15,6 @@
         android:contentDescription="@string/action_component_check"
         android:src="@drawable/ic_baseline_radio_button_unchecked_24" />
 
-    <!-- Кнопка удаления -->
-    <ImageView
-        android:id="@+id/action"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="10dip"
-        android:contentDescription="@string/action_delete_favorite"
-        android:src="@drawable/ic_baseline_delete_forever_24" />
-
     <!-- Количество -->
     <TextView
         android:id="@+id/description1"
@@ -38,10 +25,10 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:paddingEnd="10dp"
         android:text="@string/stub_component_count"
         android:textSize="14sp"
-        android:layout_toStartOf="@id/action" />
+        android:gravity="right"
+        android:paddingRight="10dp"/>
 
     <!-- Наименование -->
     <TextView

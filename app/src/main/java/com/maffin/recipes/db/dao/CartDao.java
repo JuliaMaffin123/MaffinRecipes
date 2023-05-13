@@ -22,6 +22,9 @@ public interface CartDao {
     @Query("SELECT * FROM cart WHERE item_id = :itemId")
     Cart getByItemId(long itemId);
 
+    @Query("DELETE FROM cart")
+    void removeAll();
+
     @Query("DELETE FROM cart WHERE receipt_id = :id")
     void removeAll(long id);
 

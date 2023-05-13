@@ -22,6 +22,9 @@ public interface CartReceiptDao {
     @Query("DELETE FROM cart_receipt WHERE receipt_id = :id")
     void removeById(long id);
 
+    @Query("DELETE FROM cart_receipt")
+    void removeAll();
+
     @Insert
     void insert(CartReceipt cartReceipt);
 

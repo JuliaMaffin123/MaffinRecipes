@@ -80,4 +80,14 @@ public class CartViewModel extends ViewModel {
         cart.itemChk = chk;
         cartDao.update(cart);
     }
+
+    /**
+     * Полная очистка корзины.
+     */
+    public void clearCart() {
+        CartDao cartDao = db.cartDao();
+        cartDao.removeAll();
+        CartReceiptDao cartReceiptDao = db.cartReceiptDao();
+        cartReceiptDao.removeAll();
+    }
 }

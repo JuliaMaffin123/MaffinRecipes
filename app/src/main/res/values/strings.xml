@@ -5,6 +5,7 @@
     <string name="action_share">Поделиться</string>
     <string name="action_favorite">Избранное</string>
     <string name="action_cart">Корзина</string>
+    <string name="action_clear">Очистить</string>
 
     <string name="menu_home">Рецепты</string>
     <string name="menu_favorite">Избранное</string>

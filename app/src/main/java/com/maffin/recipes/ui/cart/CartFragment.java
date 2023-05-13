@@ -18,22 +18,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.maffin.recipes.App;
 import com.maffin.recipes.Config;
 import com.maffin.recipes.R;
 import com.maffin.recipes.databinding.FragmentCartBinding;
-import com.maffin.recipes.db.AppDatabase;
-import com.maffin.recipes.db.dao.CartDao;
-import com.maffin.recipes.db.dao.CartReceiptDao;
-import com.maffin.recipes.db.dao.FavoriteDao;
 import com.maffin.recipes.db.entity.Cart;
 import com.maffin.recipes.db.entity.CartReceipt;
-import com.maffin.recipes.db.entity.Favorite;
 import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Receipt;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
@@ -69,13 +62,6 @@ public class CartFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Инициализируем разметку фрагмента
         binding = FragmentCartBinding.inflate(inflater, container, false);
-
-        // Разрешаем показ заголовка
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        // Явно задам кнопку меню и заголовок
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
-        toolbar.setTitle(R.string.menu_cart);
 
         // Инициализируем модель данных
         cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
@@ -153,6 +139,14 @@ public class CartFragment extends Fragment {
             case R.id.action_share:
                 // Нажата кнопка ПОДЕЛИТЬСЯ
                 shareCart();
+                return true;
+            case R.id.action_clear:
+                // Нажата кнопка ОЧИСТИТЬ
+                cartViewModel.clearCart();
+                final ListView listView = binding.list;
+                ArrayAdapter<Receipt> adapter = (ArrayAdapter<Receipt>) listView.getAdapter();
+                adapter.clear();
+                adapter.notifyDataSetChanged();
                 return true;
             default:
                 break;
@@ -356,49 +350,6 @@ public class CartFragment extends Fragment {
             final CartFragment.Model model = (CartFragment.Model) getData().get(position);
             // Если ID элемента списка == -1, значит это строка для группирующего названия рецепта
             return (model.itemId == -1 ? mGroupResource : mResource);
-        }
-
-        @Override
-        public void onActionClick(View v) {
-            View listItem = (View) v.getParent();
-            ListView listView = (ListView) listItem.getParent();
-            int position = listView.getPositionForView(listItem);
-            ViewHolder holder = (ViewHolder) listItem.getTag();
-            long id = holder.getId();
-            Log.d(TAG, "Тапнули удаление на элементе: position=" + position + ", id=" + id);
-            // Удаляем в базе фаворитов
-            Model model = (Model) getData().get(position);
-            AppDatabase db = App.getInstance().getDatabase();
-            CartDao dao = db.cartDao();
-            dao.removeById(model.id, model.itemId);
-            // Удаляем позицию из адаптера
-            remove(getItem(position));
-            notifyDataSetChanged();
-            // Удаляем пустые рецепты
-            List<Model> list = getData();
-            long receiptId = model.id;
-            int cnt = 0;
-            int pos = 0;
-            for (int i = 0; i < list.size(); i++) {
-                Model m = list.get(i);
-                if (m.id == receiptId) {
-                    if (m.itemId == -1) {
-                        // Нашли начало рецепта, запоминаем его позицию
-                        pos = i;
-                    } else {
-                        // Найден неудаленный компонент рецепта
-                        cnt++;
-                    }
-                }
-            }
-            // Если счетчик пуст, надо удалить весь рецепт
-            if (cnt == 0) {
-                remove(getItem(pos));
-                CartReceiptDao cartReceiptDao = db.cartReceiptDao();
-                cartReceiptDao.removeById(receiptId);
-                // Перерисовываем адаптер
-                notifyDataSetChanged();
-            }
         }
     }
 }
