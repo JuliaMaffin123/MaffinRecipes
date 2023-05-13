@@ -40,4 +40,18 @@
             android:id="@+id/action_nav_detail_to_nav_cart"
             app:destination="@id/nav_cart" />
     </fragment>
+
+    <fragment
+        android:id="@+id/tab_components"
+        android:name="com.maffin.recipes.ui.detail.components.TabComponents"
+        android:label="@string/tab_components"
+        tools:layout="@layout/tab_components" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/tab_steps"
+        android:name="com.maffin.recipes.ui.detail.steps.TabSteps"
+        android:label="@string/tab_steps"
+        tools:layout="@layout/tab_steps" >
+    </fragment>
 </navigation>

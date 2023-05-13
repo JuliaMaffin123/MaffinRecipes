@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/detail_backgroundImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:scaleType="centerCrop"
         android:contentDescription="@string/receipt_image"
