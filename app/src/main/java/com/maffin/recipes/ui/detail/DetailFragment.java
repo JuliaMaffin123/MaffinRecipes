@@ -150,20 +150,6 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         detailViewModel.getSteps().observe(getViewLifecycleOwner(), s -> {
             steps = s;
         });
-
-        return binding.getRoot();
-    }
-
-    /**
-     * Срабатывает при восстановлении активности.
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Загружаем данные
-        detailViewModel.loadReceipt(id);
-        detailViewModel.loadComponents(id);
-        detailViewModel.loadSteps(id);
         // Инициализируем вкладки
         tabLayout = binding.tabLayout;
         viewPager = binding.pager;
@@ -177,6 +163,20 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         viewPager.setAdapter(adapter);
         // Добавляем прослушку onTabSelectedListener
         tabLayout.setOnTabSelectedListener(this);
+        return binding.getRoot();
+    }
+
+    /**
+     * Срабатывает при восстановлении активности.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Загружаем данные
+        detailViewModel.loadReceipt(id);
+        detailViewModel.loadComponents(id);
+        detailViewModel.loadSteps(id);
+
 
     }
 
