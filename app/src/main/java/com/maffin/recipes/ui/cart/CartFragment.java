@@ -1,6 +1,7 @@
 package com.maffin.recipes.ui.cart;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -142,16 +144,41 @@ public class CartFragment extends Fragment {
                 return true;
             case R.id.action_clear:
                 // Нажата кнопка ОЧИСТИТЬ
-                cartViewModel.clearCart();
-                final ListView listView = binding.list;
-                ArrayAdapter<Receipt> adapter = (ArrayAdapter<Receipt>) listView.getAdapter();
-                adapter.clear();
-                adapter.notifyDataSetChanged();
+                clearCart();
                 return true;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Очистка корзины.
+     */
+    private void clearCart() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        // Yes button clicked
+                        cartViewModel.clearCart();
+                        final ListView listView = binding.list;
+                        ArrayAdapter<Receipt> adapter = (ArrayAdapter<Receipt>) listView.getAdapter();
+                        adapter.clear();
+                        adapter.notifyDataSetChanged();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        // No button clicked
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Вы уверены, что хотите очистить корзину?").setPositiveButton("Да", dialogClickListener)
+                .setNegativeButton("Нет", dialogClickListener).show();
     }
 
     /**
