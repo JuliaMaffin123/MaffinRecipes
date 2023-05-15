@@ -8,6 +8,14 @@
     android:background="@color/md_theme_light_onPrimary"
     tools:context=".ui.home.HomeFragment">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:indeterminate="true"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"

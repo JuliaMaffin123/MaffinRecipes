@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,6 +59,7 @@ public class HomeFragment extends Fragment {
         homeViewModel.getList().observe(getViewLifecycleOwner(), receipts -> {
             ArrayAdapter<Receipt> adapter = new HomeAdapter(getContext(), receipts);
             listView.setAdapter(adapter);
+            binding.progressBar.setVisibility(View.GONE);
         });
         // Навешиваем прослушку на нажатие по элементу списка
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -83,12 +85,6 @@ public class HomeFragment extends Fragment {
         super.onResume();
         // Загружаем данные из сети
         homeViewModel.loadData();
-        // Разрешаем показ заголовка
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        // Явно задам кнопку меню и заголовок
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
-        toolbar.setTitle(R.string.menu_home);
     }
 
     /**
