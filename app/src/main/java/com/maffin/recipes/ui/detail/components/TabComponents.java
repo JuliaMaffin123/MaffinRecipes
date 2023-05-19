@@ -1,17 +1,16 @@
 package com.maffin.recipes.ui.detail.components;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -46,6 +45,10 @@ public class TabComponents extends Fragment {
     private List<Component> componentList;
     /** Родительский фрагмент. */
     private DetailFragment root;
+    /** Кнопка "Выбрать все". */
+    private AppCompatButton btnSelectAll;
+    /** Статус кнопки "Выбрать все". */
+    private boolean isCheckedAll;
 
     /**
      * Возвращает ссылку на родительский фрагмент.
@@ -75,7 +78,6 @@ public class TabComponents extends Fragment {
         // Навешиваем прослушку на изменение данных в модели данных. Когда модель получит данные из БД,
         // прослушка через адаптер загрузит список в ListView
         final ListView listView = binding.list;
-        listView.setEmptyView(binding.empty);
         componentsViewModel.getList().observe(getViewLifecycleOwner(), components -> {
             // Запоминаем список ингредиентов
             componentList = components;
@@ -96,20 +98,22 @@ public class TabComponents extends Fragment {
                 }
             }
             // Отрисовываем счетчик выбранных элементов
-            root.showComponentsCount(checked == itemToggled.length ? checked - 1 : checked);
+            root.showComponentsCount(checked);
             // Инициализируем адаптер и список
             ArrayAdapter<Component> adapter = new LocalAdapter(getContext(), components);
             listView.setAdapter(adapter);
+            // Отрисовываем кнопку
+            isCheckedAll = checkAllCheckers();
         });
+        // Навешиваем прослушку на кнопку "Выбрать все"
+        btnSelectAll = binding.actionSelectAll;
+        btnSelectAll.setOnClickListener(view -> onClickCheckAll());
         // Навешиваем прослушку на нажатие по элементу списка
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                // Зная view - элемент списка, получим из него холдер с данными
-                final AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) view.getTag();
-                // Добавляем или удаляем ингредиент из корзины
-                switchInCart(position, holder);
-            }
+        listView.setOnItemClickListener((adapterView, view, position, id) -> {
+            // Зная view - элемент списка, получим из него холдер с данными
+            final AbstractListAdapter.ViewHolder holder = (AbstractListAdapter.ViewHolder) view.getTag();
+            // Добавляем или удаляем ингредиент из корзины
+            switchInCart(position, holder);
         });
         return binding.getRoot();
     }
@@ -139,62 +143,68 @@ public class TabComponents extends Fragment {
         // Проверим, присутствует ли элемент списка в кэше?
         if (itemToggled[position]) {
             // Удаляем из списка
-            if (itemId == -1) {
-                // Нажат элемент "Выбрать все", удаляем все элементы
-                itemToggled = new boolean[componentList.size()];
-                componentsViewModel.removeAllFromCart(id);
-                // Удяляем рецепт из списка рецептов в корзине
+            itemToggled[position] = false;
+            componentsViewModel.removeFromCart(id, itemId);
+            // Проверяем остались ли отмеченные элементы
+            boolean success = false;
+            for (int i = 0; i < componentList.size(); i++) {
+                if (itemToggled[i]) {
+                    success = true;
+                    break;
+                }
+            }
+            // Если это удален последний элемент рецепта, убираем рецепт из списка
+            if (!success) {
                 componentsViewModel.removeFromCart(id);
-            } else {
-                // Удаляем один элемент и "Выбрать все"
-                itemToggled[position] = false;
-                componentsViewModel.removeFromCart(id, itemId);
-                itemToggled[componentList.size() - 1] = false;
-                componentsViewModel.removeFromCart(id, -1);
-                // Проверяем остались ли отмеченные элементы
-                boolean success = false;
-                for (int i = 0; i < componentList.size() - 1; i++) {
-                    if (itemToggled[i]) {
-                        success = true;
-                        break;
-                    }
-                }
-                // Если это удален последний элемент рецепта, убираем рецепт из списка
-                if (!success) {
-                    componentsViewModel.removeFromCart(id);
-                }
             }
         } else {
             // Загружаем рецепт из родительской активности
             receipt = root.getReceipt();
             // Добавляем в список
-            if (itemId == -1) {
-                // Нажат элемент "Выбрать все", добавляем все элементы
-                for (int i = 0; i < componentList.size(); i++) {
-                    itemToggled[i] = true;
-                    Component component = (Component) listView.getItemAtPosition(i);
-                    componentsViewModel.appendToCart(id, component);
-                }
-                // Добавляем рецрпт в корзину
-                componentsViewModel.appendReceiptToCart(id, receipt);
-            } else {
-                // Добавляем один элемент и "Выбрать все", если список наполнился
-                Component component = (Component) listView.getItemAtPosition(position);
-                itemToggled[position] = true;
-                componentsViewModel.appendToCart(id, component);
-                boolean success = true;
-                for (int i = 0; i < componentList.size() - 1; i++) {
-                    success = success && itemToggled[i];
-                }
-                if (success) {
-                    itemToggled[componentList.size() - 1] = true;
-                    componentsViewModel.appendToCart(id, null);
-                }
-                // Добавляем рецрпт в корзину
-                componentsViewModel.appendReceiptToCart(id, receipt);
-            }
+            Component component = (Component) listView.getItemAtPosition(position);
+            itemToggled[position] = true;
+            componentsViewModel.appendToCart(id, component);
+            // Добавляем рецепт в корзину
+            componentsViewModel.appendReceiptToCart(id, receipt);
         }
         showCheckers();
+        isCheckedAll = checkAllCheckers();
+    }
+
+    /**
+     * Изменяет текст кнопки в зависимости от того сколько элементов списка отмечено.
+     */
+    private boolean checkAllCheckers() {
+        boolean success = true;
+        for (int i = 0; i < componentList.size(); i++) {
+            success = success && itemToggled[i];
+        }
+        // Меняем текст у кнопки
+        btnSelectAll.setText(success ? "Убрать всё" : "Выбрать всё");
+        return success;
+    }
+
+    private void onClickCheckAll() {
+        if (isCheckedAll) {
+            // Выделены все элементы, снимаем все выделение
+            itemToggled = new boolean[componentList.size()];
+            componentsViewModel.removeAllFromCart(id);
+            // Удяляем рецепт из списка рецептов в корзине
+            componentsViewModel.removeFromCart(id);
+        } else {
+            // Загружаем рецепт из родительской активности
+            receipt = root.getReceipt();
+            // Выделены не все элементы, отмечаем все
+            for (int i = 0; i < componentList.size(); i++) {
+                itemToggled[i] = true;
+                Component component = (Component) binding.list.getItemAtPosition(i);
+                componentsViewModel.appendToCart(id, component);
+            }
+            // Добавляем рецепт в корзину
+            componentsViewModel.appendReceiptToCart(id, receipt);
+        }
+        showCheckers();
+        isCheckedAll = checkAllCheckers();
     }
 
     /**
@@ -219,7 +229,7 @@ public class TabComponents extends Fragment {
         // Сообщим адаптеру, что данные в списке изменились и его надо обновить
         adapter.notifyDataSetChanged();
         // Сообщим корневой активности об изменении числа выбранных элементов
-        root.showComponentsCount(checked == itemToggled.length ? checked - 1 : checked);
+        root.showComponentsCount(checked);
     }
 
     /**
@@ -249,10 +259,6 @@ public class TabComponents extends Fragment {
             // Наименование ингредиента
             if (holder.getName() != null) {
                 holder.getName().setText(component.getName());
-                // Для "Выбрать всё" изменим текст на жирный
-                if (component.getId() == -1) {
-                    holder.getName().setTypeface(null, Typeface.BOLD);
-                }
             }
             // Количество
             if (holder.getDescription1() != null) {

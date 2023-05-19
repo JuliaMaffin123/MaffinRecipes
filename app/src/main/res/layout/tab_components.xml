@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Разметка вкладки ИНГРЕДИЕНТЫ -->
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,27 +9,21 @@
     android:orientation="vertical"
     tools:context=".ui.detail.components.TabComponents">
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/actionSelectAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:theme="@style/PrimaryButton"
+        android:layout_margin="5dp"
+         />
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
-        android:divider="@android:color/transparent" />
+        android:layout_above="@id/actionSelectAll" />
 
-    <TextView
-        android:id="@android:id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/empty_components" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

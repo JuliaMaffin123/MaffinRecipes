@@ -86,11 +86,6 @@ public class ComponentsViewModel extends ViewModel {
                     // При успешном запросе извлекаем массив ингредиентов из ответа и передаем их на фрагмент через LiveData
                     ResponseSuccess<Component> body = response.body();
                     List<Component> list = body.getData();
-                    // Добавляем последним элементом "Выбрать всё..."
-                    Component all = new Component();
-                    all.setId(-1);
-                    all.setName("Выбрать всё...");
-                    list.add(all);
                     // Передаем данные в активность
                     mList.setValue(list);
                 }
@@ -139,11 +134,15 @@ public class ComponentsViewModel extends ViewModel {
      * @param component ингредиент
      */
     public void appendToCart(long id, Component component) {
-        // Преобразуем ингредиент в запись для БД
-        Cart cart = componentToCart(id, component);
-        // Вставляем запись
+        // Проверяем есть ли компонентв корзине
         CartDao cartDao = db.cartDao();
-        cartDao.insert(cart);
+        Cart cart = cartDao.getByItemId(component.getId());
+        if (cart == null) {
+            // Преобразуем ингредиент в запись для БД
+            cart = componentToCart(id, component);
+            // Вставляем запись
+            cartDao.insert(cart);
+        }
     }
 
     /**
@@ -184,17 +183,11 @@ public class ComponentsViewModel extends ViewModel {
      */
     private Cart componentToCart(long id, Component component) {
         Cart cart = new Cart();
-        if (component == null) {
-            // Кнопка "Добавить все"
-            cart.itemId = -1;
-            cart.receiptId = id;
-        } else {
-            cart.itemId = component.getId();
-            cart.receiptId = id;
-            cart.itemChk = false;
-            cart.itemCnt = component.getCount();
-            cart.itemName = component.getName();
-        }
+        cart.itemId = component.getId();
+        cart.receiptId = id;
+        cart.itemChk = false;
+        cart.itemCnt = component.getCount();
+        cart.itemName = component.getName();
         return cart;
     }
 }
