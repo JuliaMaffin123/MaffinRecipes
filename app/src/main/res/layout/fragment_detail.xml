@@ -79,10 +79,11 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/md_theme_light_onPrimary"
+            android:background="@color/md_theme_light_onSecondary"
             android:minHeight="?attr/actionBarSize"
             app:tabMode="fixed"
-            app:tabIndicatorColor="?attr/colorPrimary"
+            app:tabIndicatorColor="@color/md_theme_light_primary"
+            app:tabTextColor="@color/text_tab_indicator"
             app:tabIndicatorHeight="2dp"
             app:tabTextAppearance="@style/MyCustomTextAppearance"/>
 

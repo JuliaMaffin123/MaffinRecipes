@@ -87,7 +87,7 @@ public class FavoriteAdapter extends AbstractListAdapter {
                 holder.getDescription2().setText(context.getString(R.string.template_energy, receiptKkal));
                 DrawUtils.spanImageIntoText(context, holder.getDescription2(),
                         context.getString(R.string.holder_energy),
-                        R.drawable.ic_baseline_fastfood_24,
+                        R.drawable.ic_outline_fastfood_24,
                         context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
                         context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
             } else {

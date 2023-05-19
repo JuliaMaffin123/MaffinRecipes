@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:paddingLeft="15dp"
     android:paddingRight="15dp"
-    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
     >
     <!-- app:cardBackgroundColor="@color/md_theme_light_primaryContainer" app:contentPadding="1dp"-->
     <com.google.android.material.card.MaterialCardView
@@ -14,7 +14,7 @@
         app:cardCornerRadius="8dp"
         app:cardElevation="2dp"
         app:strokeWidth="2dp"
-        app:strokeColor="@color/md_theme_light_tertiary"
+        app:strokeColor="@color/md_theme_light_primary"
         >
 
         <RelativeLayout

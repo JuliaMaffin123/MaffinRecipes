@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_share"
-        android:icon="@drawable/ic_baseline_share_24"
+        android:icon="@drawable/ic_outline_share_24"
         android:orderInCategory="100"
         android:title="@string/action_share"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_favorite"
-        android:icon="@drawable/ic_baseline_favorite_24"
+        android:icon="@drawable/ic_baseline_favorite_border_24"
         android:orderInCategory="200"
         android:title="@string/action_favorite"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_cart"
-        android:icon="@drawable/ic_baseline_shopping_cart_white_24"
+        android:icon="@drawable/ic_outline_shopping_cart_24"
         android:orderInCategory="200"
         android:title="@string/action_cart"
         app:showAsAction="ifRoom"

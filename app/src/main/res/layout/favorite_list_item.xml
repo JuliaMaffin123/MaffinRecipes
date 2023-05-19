@@ -25,7 +25,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="6dip"
         android:contentDescription="@string/action_delete_favorite"
-        android:src="@drawable/ic_baseline_delete_forever_24" />
+        android:src="@drawable/ic_baseline_delete_outline_24" />
 
     <!-- Первая строка -->
     <TextView

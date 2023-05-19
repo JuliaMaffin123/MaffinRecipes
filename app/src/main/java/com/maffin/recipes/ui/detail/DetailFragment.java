@@ -137,7 +137,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 binding.receiptEnergy.setText(getString(R.string.template_energy, receipt.getEnergy()));
                 DrawUtils.spanImageIntoText(getContext(), binding.receiptEnergy,
                         getString(R.string.holder_energy),
-                        R.drawable.ic_baseline_fastfood_24,
+                        R.drawable.ic_outline_fastfood_24,
                         getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
                         getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
             } else {
@@ -298,10 +298,12 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
     private void changeColorMenuFavorite(Favorite favorite) {
         if (favorite == null) {
             // Записи нет в избранном: белый цвет
-            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.md_theme_light_onPrimary);
+            //DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.md_theme_light_scrim);
+            favoriteMenuItem.setIcon(R.drawable.ic_baseline_favorite_border_24);
         } else {
             // Записи в избранном: другой цвет
-            DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.md_theme_light_error);
+            //DrawUtils.tintMenuIcon(getContext(), favoriteMenuItem, R.color.md_theme_light_primary);
+            favoriteMenuItem.setIcon(R.drawable.ic_baseline_favorite_24);
         }
     }
 

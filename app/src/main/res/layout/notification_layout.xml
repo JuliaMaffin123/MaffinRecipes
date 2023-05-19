@@ -20,7 +20,7 @@
             android:layout_margin="0dp"
             android:contentDescription="Notification Icon"
             android:gravity="center"
-            android:src="@drawable/ic_baseline_shopping_cart_white_24" />
+            android:src="@drawable/ic_outline_shopping_cart_24" />
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/txtCount"
