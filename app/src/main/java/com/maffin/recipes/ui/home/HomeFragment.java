@@ -95,18 +95,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
-        // Инициируем разметку
-        inflater.inflate(R.menu.main, menu);
-    }
-
-    /**
-     * Срабатывает при клике на пункт меню (в нашем случае на кнопки в ActionBar).
-     * @param item  пункт меню
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
     }
 
     /**

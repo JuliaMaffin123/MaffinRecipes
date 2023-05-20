@@ -1,5 +1,6 @@
 package com.maffin.recipes.ui.detail;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -8,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -94,14 +96,14 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         // Инициализируем разметку
         binding = FragmentDetailBinding.inflate(inflater, container, false);
 
-        // Добавляем кнопку возврата на главный экран
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
-
-        // Удаляем заголовок
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        // Устанавливаем фоново изображение
+//        // Добавляем кнопку возврата на главный экран
+//        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+//        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+//
+//        // Удаляем заголовок
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+//
+        // Устанавливаем фоновое изображение
         if (id > 0) {
             // Запускаем загрузку картинки
             String url = String.format(URL_TEMPLATE, id);
@@ -177,7 +179,23 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         detailViewModel.loadComponents(id);
         detailViewModel.loadSteps(id);
 
+        // Меняем заголовок
+        replaceToolbar(true);
+    }
 
+    private void replaceToolbar(boolean isOnOff) {
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        if (isOnOff) {
+            // Добавляем кнопку возврата на главный экран
+            toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+            // Удаляем заголовок
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+        } else {
+            // Восстанавливаем кнопку меню
+            toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
+            // Удаляем заголовок
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+        }
     }
 
     /**
@@ -218,6 +236,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Передаем управление прошлому фрагменту в стеке
+                replaceToolbar(false);
                 getActivity().getSupportFragmentManager().popBackStack();
                 return true;
             case R.id.action_share:
@@ -236,6 +255,20 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Передаем управление прошлому фрагменту в стеке
+                replaceToolbar(false);
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     /**
