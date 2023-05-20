@@ -160,7 +160,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         tabLayout.addTab(tabLayout.newTab().setText("Приготовление"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         // Инициализируем адаптер
-        PagerAdapter adapter = new PagerAdapter(getParentFragmentManager(), tabLayout.getTabCount());
+        PagerAdapter adapter = new PagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
         // Передаем адаптер компоненту для управления
         viewPager.setAdapter(adapter);
         // Добавляем прослушку onTabSelectedListener
@@ -181,6 +181,9 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
 
         // Меняем заголовок
         replaceToolbar(true);
+
+        // При активации фрагмента всегда переключаемся на первую вкладку
+        viewPager.setCurrentItem(0);
     }
 
     private void replaceToolbar(boolean isOnOff) {

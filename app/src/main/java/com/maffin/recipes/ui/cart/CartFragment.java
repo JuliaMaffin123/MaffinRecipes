@@ -119,17 +119,17 @@ public class CartFragment extends Fragment {
         cartViewModel.loadData();
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                Navigation.findNavController(getActivity().findViewById(android.R.id.list)).navigate(R.id.nav_home);
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-    }
+//    @Override
+//    public void onAttach(@NonNull Context context) {
+//        super.onAttach(context);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                Navigation.findNavController(getActivity().findViewById(android.R.id.list)).navigate(R.id.nav_home);
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//    }
 
     /**
      * Срабатывает при создании меню.

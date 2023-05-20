@@ -50,24 +50,10 @@ public class TabComponents extends Fragment {
     /** Статус кнопки "Выбрать все". */
     private boolean isCheckedAll;
 
-    /**
-     * Возвращает ссылку на родительский фрагмент.
-     * @return
-     */
-    public DetailFragment getRoot() {
-        List<Fragment> fragmentList = getParentFragmentManager().getFragments();
-        for (Fragment fragment : fragmentList) {
-            if (fragment instanceof DetailFragment) {
-                return (DetailFragment) fragment;
-            }
-        }
-        return null;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Получаем ID рецепта
-        root = getRoot();
+        root = (DetailFragment) getParentFragment();
         id = root.getReceiptId();
 
         // Инициализируем разметку фрагмента
