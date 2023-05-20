@@ -193,7 +193,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         } else {
             // Восстанавливаем кнопку меню
             toolbar.setNavigationIcon(R.drawable.ic_baseline_menu_24);
-            // Удаляем заголовок
+            // Восстанавливаем видимость заголовка
             ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
         }
     }
@@ -249,6 +249,8 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 return true;
             case R.id.action_cart:
                 // Нажата кнопка КОРЗИНА.
+                // Восстанавливаем видимость заголовка
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
                 Navigation.findNavController(getActivity().findViewById(R.id.detail_backgroundImage)).navigate(R.id.nav_cart);
                 return true;
             default:
