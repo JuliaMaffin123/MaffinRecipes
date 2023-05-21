@@ -46,8 +46,28 @@ public class ImageManager {
      */
     public static void fetchImage(final Context context, final String iUrl, final ImageView iView, final int stub) {
         // Если URL или ImageView не определены,
-        if ( iUrl == null || iView == null )
+        if (iUrl == null || iView == null) {
             return;
+        }
+        // Проверяем, может наша картинка уже а кэше?
+        if (BITMAP_HASH_MAP.containsKey(iUrl)) {
+            Log.v(TAG, "Изображени найдено в кэше. URL: " + iUrl);
+            // Вставляем картинку в ImageView и делаем его видимым
+            iView.setImageBitmap(BITMAP_HASH_MAP.get(iUrl));
+            iView.setVisibility(View.VISIBLE);
+            return;
+        }
+        // Проверяем, может наша картинка ране была сохранена в файловой системе телефона?
+        Bitmap image = loadBitmap(context, iUrl);
+        if (image != null) {
+            // Добавляем картинку в кэш
+            BITMAP_HASH_MAP.put(iUrl, image);
+            // Вставляем картинку в ImageView и делаем его видимым
+            iView.setImageBitmap(image);
+            iView.setVisibility(View.VISIBLE);
+            return;
+        }
+        // Картинка не известная, надо загружать из сети
 
         // Сохраним пару в очереди
         IMAGE_QUEUE.put(iView, iUrl);
@@ -78,35 +98,16 @@ public class ImageManager {
                     }
                 };
 
-                // Проверяем, может наша картинка уже а кэше?
-                if (BITMAP_HASH_MAP.containsKey(iUrl)) {
-                    Log.v(TAG, "Изображени найдено в кэше. URL: " + iUrl);
+                Bitmap image = downloadImage(iUrl);
+                if (image != null) {
+                    Log.v(TAG, "Изображение загружено по URL: " + iUrl);
+                    // Добавляем картинку в кэш
+                    BITMAP_HASH_MAP.put(iUrl, image);
                     // Передаем изображение а handler для отрисовки в UI
-                    final Message message = handler.obtainMessage(1, BITMAP_HASH_MAP.get(iUrl));
+                    final Message message = handler.obtainMessage(1, image);
                     handler.sendMessage(message);
-                } else {
-                    // Проверяем, может наша картинка ране была сохранена в файловой системе телефона?
-                    Bitmap image = loadBitmap(context, iUrl);
-                    if (image != null) {
-                        // Добавляем картинку в кэш
-                        BITMAP_HASH_MAP.put(iUrl, image);
-                        // Передаем изображение а handler для отрисовки в UI
-                        final Message message = handler.obtainMessage(1, image);
-                        handler.sendMessage(message);
-                    } else {
-                        // Картинка не известная, надо загружать из сети
-                        image = downloadImage(iUrl);
-                        if (image != null) {
-                            Log.v(TAG, "Изображение загружено по URL: " + iUrl);
-                            // Добавляем картинку в кэш
-                            BITMAP_HASH_MAP.put(iUrl, image);
-                            // Передаем изображение а handler для отрисовки в UI
-                            final Message message = handler.obtainMessage(1, image);
-                            handler.sendMessage(message);
-                            // Сохраняем картинку в файловой системе для переиспользования в будущем
-                            saveBitmap(context, image, iUrl);
-                        }
-                    }
+                    // Сохраняем картинку в файловой системе для переиспользования в будущем
+                    saveBitmap(context, image, iUrl);
                 }
                 Looper.loop();
             }
