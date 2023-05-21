@@ -96,13 +96,6 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         // Инициализируем разметку
         binding = FragmentDetailBinding.inflate(inflater, container, false);
 
-//        // Добавляем кнопку возврата на главный экран
-//        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-//        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
-//
-//        // Удаляем заголовок
-//        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-//
         // Устанавливаем фоновое изображение
         if (id > 0) {
             // Запускаем загрузку картинки
