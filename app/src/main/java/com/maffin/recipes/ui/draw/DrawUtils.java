@@ -1,15 +1,19 @@
 package com.maffin.recipes.ui.draw;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
+
+import java.util.Locale;
 
 /**
  * Вспомогательный класс для управления визуальными элементами.
@@ -52,5 +56,39 @@ public class DrawUtils {
             DrawableCompat.setTint(wrapDrawable, context.getResources().getColor(color));
             item.setIcon(wrapDrawable);
         }
+    }
+
+    /**
+     * Выделение ключевых слов жирным.
+     * @param text              Исходный текст
+     * @param searchKeywords    Список ключевых слов
+     * @return
+     */
+    public static SpannableStringBuilder emboldenKeywords(final String text,
+                                                           final String[] searchKeywords) {
+        // searching in the lower case text to make sure we catch all cases
+        final String loweredMasterText = text.toLowerCase();
+        final SpannableStringBuilder span = new SpannableStringBuilder(text);
+
+        // for each keyword
+        for (final String keyword : searchKeywords) {
+            // lower the keyword to catch both lower and upper case chars
+            final String loweredKeyword = keyword.toLowerCase();
+
+            // start at the beginning of the master text
+            int offset = 0;
+            int start;
+            final int len = keyword.length(); // let's calculate this outside the 'while'
+
+            while ((start = loweredMasterText.indexOf(loweredKeyword, offset)) >= 0) {
+                // make it bold
+                span.setSpan(new StyleSpan(Typeface.BOLD), start, start+len, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                // move your offset pointer
+                offset = start + len;
+            }
+        }
+
+        // put it in your TextView and smoke it!
+        return span;
     }
 }

@@ -2,6 +2,7 @@ package com.maffin.recipes.ui.detail.steps;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.maffin.recipes.network.ImageManager;
 import com.maffin.recipes.network.Step;
 import com.maffin.recipes.ui.adapter.AbstractListAdapter;
 import com.maffin.recipes.ui.detail.DetailFragment;
+import com.maffin.recipes.ui.draw.DrawUtils;
 
 import java.util.List;
 
@@ -104,7 +106,8 @@ public class TabSteps extends Fragment {
             // Описание шага
             if (holder.getName() != null) {
                 String text = String.format(DESC_TEMPLATE, position + 1, step.getDescription());
-                holder.getName().setText(text);
+                SpannableStringBuilder sb = DrawUtils.emboldenKeywords(text, new String[] {"Шаг " + (position + 1)});
+                holder.getName().setText(sb);
             }
             // Изображение
             if (holder.getThumbnail() != null) {
