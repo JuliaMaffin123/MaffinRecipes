@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transparent_color">#00000000</color>
     <!-- Material 3 -->
     <color name="seed">#03194F</color>
     <color name="md_theme_light_primary">#405AA9</color>

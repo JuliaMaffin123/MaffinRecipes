@@ -119,18 +119,6 @@ public class CartFragment extends Fragment {
         cartViewModel.loadData();
     }
 
-//    @Override
-//    public void onAttach(@NonNull Context context) {
-//        super.onAttach(context);
-//        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-//            @Override
-//            public void handleOnBackPressed() {
-//                Navigation.findNavController(getActivity().findViewById(android.R.id.list)).navigate(R.id.nav_home);
-//            }
-//        };
-//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
-//    }
-
     /**
      * Срабатывает при создании меню.
      * @param menu  мею
@@ -190,8 +178,10 @@ public class CartFragment extends Fragment {
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage("Вы уверены, что хотите очистить корзину?").setPositiveButton("Да", dialogClickListener)
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.AlertDialogAppTheme);
+        builder.setTitle("Очистить корзину?")
+                .setMessage("Корзина покупок будет полностью очищена. Для добавления новых покупок отметьте ингредиенты в нужном рецепте.")
+                .setPositiveButton("Да", dialogClickListener)
                 .setNegativeButton("Нет", dialogClickListener).show();
     }
 

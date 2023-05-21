@@ -33,12 +33,38 @@
         <item name="colorSurfaceVariant">@color/md_theme_light_surfaceVariant</item>
         <item name="colorOnSurfaceVariant">@color/md_theme_light_onSurfaceVariant</item>
         <item name="colorPrimaryInverse">@color/md_theme_light_inversePrimary</item>
+        <!-- Подключение своей темы для диалогов. -->
+        <item name="android:alertDialogTheme">@style/AlertDialogAppTheme</item>
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <!-- Цветовая тема для кнопки. -->
     <style name="PrimaryButton" parent="Theme.AppCompat">
         <item name="colorButtonNormal">@color/md_theme_light_primary</item>
         <item name="colorControlHighlight">@color/md_theme_light_onPrimaryContainer</item>
+    </style>
+
+    <!-- Тема для диалога. -->
+    <style name="AlertDialogAppTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="dialogCornerRadius">20dp</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.MyApp.NegativeButton</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.MyApp.PositiveButton</item>
+    </style>
+
+    <style name="Widget.MyApp.NegativeButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.MyApp.NegativeButton</item>
+    </style>
+
+    <style name="Widget.MyApp.PositiveButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.MyApp.PositiveButton</item>
+    </style>
+
+    <style name="ThemeOverlay.MyApp.NegativeButton" parent="">
+        <item name="colorPrimary">@color/md_theme_light_secondary</item>
+    </style>
+
+    <style name="ThemeOverlay.MyApp.PositiveButton" parent="">
+        <item name="colorPrimary">@color/md_theme_light_primary</item>
     </style>
 </resources>
