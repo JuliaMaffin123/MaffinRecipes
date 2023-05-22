@@ -412,7 +412,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
      */
     public void shareReceipt() {
         StringBuilder sb = new StringBuilder();
-        sb.append(receipt.getName() + "\n");
+        sb.append("*" + receipt.getName() + "*\n");
         if (components != null) {
             for (Component c : components) {
                 sb.append("• " + c.getName() + " " + c.getCount() + "\n");
@@ -420,8 +420,10 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
             sb.append("\n");
         }
         if (steps != null) {
+            int i = 0;
             for (Step s : steps) {
-                sb.append(s.getDescription() + "\n");
+                i++;
+                sb.append("Шаг " + i + ": " + s.getDescription() + "\n");
             }
         }
 

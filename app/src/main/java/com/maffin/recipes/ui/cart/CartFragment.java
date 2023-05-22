@@ -254,7 +254,7 @@ public class CartFragment extends Fragment {
             for (Model m : modelList) {
                 if (m.itemId == -1) {
                     // Заголовок рецепта
-                    sb.append("\n" + m.name + "\n");
+                    sb.append("\n*" + m.name + "*\n");
                 } else {
                     // Ингредиент
                     sb.append("• " + m.name + " " + m.desc + "\n");
