@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
@@ -247,8 +249,22 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 // Нажата кнопка КОРЗИНА.
                 // Восстанавливаем видимость заголовка
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-                Navigation.findNavController(getActivity().findViewById(R.id.detail_backgroundImage)).navigate(R.id.nav_cart);
+//                Navigation.findNavController(getActivity().findViewById(R.id.detail_backgroundImage))
+//                        .navigate(R.id.nav_cart);
+
+                // Manually build the NavOptions that manually do
+                // what NavigationUI.onNavDestinationSelected does for you
+                Bundle bundle = new Bundle();
+                NavOptions navOptions = new NavOptions.Builder()
+                        .setPopUpTo(R.id.nav_home, false, true)
+                        .setRestoreState(true)
+                        .build();
+
+                NavController navController = Navigation.findNavController(getActivity(),
+                        R.id.nav_host_fragment_content_main);
+                navController.navigate(R.id.nav_cart, bundle, navOptions);
                 return true;
+
             default:
                 break;
         }
@@ -296,17 +312,19 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         if (count < 0) {
             return;
         }
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (count == 0)
-                    txtViewCount.setVisibility(View.GONE);
-                else {
-                    txtViewCount.setVisibility(View.VISIBLE);
-                    txtViewCount.setText(Integer.toString(count));
+        if (txtViewCount != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (count == 0)
+                        txtViewCount.setVisibility(View.GONE);
+                    else {
+                        txtViewCount.setVisibility(View.VISIBLE);
+                        txtViewCount.setText(Integer.toString(count));
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**

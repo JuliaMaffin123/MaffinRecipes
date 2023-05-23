@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        NavigationUI.onNavDestinationSelected(item, navController);
-        return super.onOptionsItemSelected(item);
+        return NavigationUI.onNavDestinationSelected(item, navController)
+                || super.onOptionsItemSelected(item);
     }
 
     @Override
