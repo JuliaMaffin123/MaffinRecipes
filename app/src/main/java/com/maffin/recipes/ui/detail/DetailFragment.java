@@ -251,13 +251,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 // Нажата кнопка КОРЗИНА. Восстанавливаем видимость заголовка
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-                Bundle bundle = new Bundle();
-                NavOptions navOptions = new NavOptions.Builder()
-                        .setPopUpTo(R.id.nav_home, false, true)
-                        .setRestoreState(true)
-                        .build();
-
-                navController.navigate(R.id.nav_cart, bundle, navOptions);
+                navController.navigate(R.id.nav_cart);
                 return true;
             default:
                 break;
