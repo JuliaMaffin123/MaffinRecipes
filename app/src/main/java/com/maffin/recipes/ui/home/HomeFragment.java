@@ -230,14 +230,14 @@ public class HomeFragment extends Fragment {
                     holder.getDescription1().setVisibility(View.GONE);
                 }
             }
-            // Калорийность рецепта
+            // Количество порций
             if (holder.getDescription2() != null) {
                 int receiptKkal = receipt.getEnergy();
                 if (receiptKkal > 0) {
                     holder.getDescription2().setVisibility(View.VISIBLE);
                     holder.getDescription2().setText(context.getString(R.string.template_energy, receiptKkal));
                     DrawUtils.spanImageIntoText(context, holder.getDescription2(), context.getString(R.string.holder_energy),
-                            R.drawable.ic_outline_fastfood_24,
+                            R.drawable.ic_outline_room_service_24,
                             context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
                             context.getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
                 } else {

@@ -132,7 +132,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 binding.receiptEnergy.setText(getString(R.string.template_energy, receipt.getEnergy()));
                 DrawUtils.spanImageIntoText(getContext(), binding.receiptEnergy,
                         getString(R.string.holder_energy),
-                        R.drawable.ic_outline_fastfood_24,
+                        R.drawable.ic_outline_room_service_24,
                         getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
                         getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
             } else {

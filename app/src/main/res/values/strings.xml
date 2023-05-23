@@ -23,9 +23,9 @@
     <string name="stub_receipt_energy">(=) 100 Ккал</string>
 
     <string name="holder_time">[time-icon]</string>
-    <string name="template_time">[time-icon] %1$d м</string>
+    <string name="template_time">[time-icon] %1$d мин.</string>
     <string name="holder_energy">[energy-icon]</string>
-    <string name="template_energy">[energy-icon] %1$d кКал</string>
+    <string name="template_energy">[energy-icon] %1$d порц.</string>
 
     <string name="tab_components">Ингредиенты</string>
     <string name="tab_steps">Приготовление</string>
