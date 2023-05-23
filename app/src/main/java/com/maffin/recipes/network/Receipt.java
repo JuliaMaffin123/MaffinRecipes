@@ -10,7 +10,7 @@ public class Receipt {
     private String description;
     private String source;
     private int time;
-    private int energy;
+    private int portion;
 
     public int getId() {
         return id;
@@ -36,8 +36,8 @@ public class Receipt {
         return time;
     }
 
-    public int getEnergy() {
-        return energy;
+    public int getPortion() {
+        return portion;
     }
 
     public void setId(int id) {
@@ -64,7 +64,7 @@ public class Receipt {
         this.time = time;
     }
 
-    public void setEnergy(int energy) {
-        this.energy = energy;
+    public void setPortion(int portion) {
+        this.portion = portion;
     }
 }

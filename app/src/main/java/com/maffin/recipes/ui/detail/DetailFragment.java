@@ -128,17 +128,17 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
             } else {
                 binding.receiptTime.setVisibility(View.GONE);
             }
-            // Каллорийность
-            if (receipt.getEnergy() != 0) {
-                binding.receiptEnergy.setVisibility(View.VISIBLE);
-                binding.receiptEnergy.setText(getString(R.string.template_energy, receipt.getEnergy()));
-                DrawUtils.spanImageIntoText(getContext(), binding.receiptEnergy,
-                        getString(R.string.holder_energy),
+            // Кол-во порций
+            if (receipt.getPortion() != 0) {
+                binding.receiptPortion.setVisibility(View.VISIBLE);
+                binding.receiptPortion.setText(getString(R.string.template_portion, receipt.getPortion()));
+                DrawUtils.spanImageIntoText(getContext(), binding.receiptPortion,
+                        getString(R.string.holder_portion),
                         R.drawable.ic_outline_room_service_24,
                         getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
                         getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
             } else {
-                binding.receiptEnergy.setVisibility(View.GONE);
+                binding.receiptPortion.setVisibility(View.GONE);
             }
         });
         detailViewModel.getComponents().observe(getViewLifecycleOwner(), c -> {
@@ -230,12 +230,14 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        NavController navController = Navigation.findNavController(getActivity(),
+                R.id.nav_host_fragment_content_main);
+
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Передаем управление прошлому фрагменту в стеке
                 replaceToolbar(false);
-                getActivity().getSupportFragmentManager().popBackStack();
+                navController.popBackStack();
                 return true;
             case R.id.action_share:
                 // Нажата кнопка ПОДЕЛИТЬСЯ
@@ -246,25 +248,17 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 toggleFavorite();
                 return true;
             case R.id.action_cart:
-                // Нажата кнопка КОРЗИНА.
-                // Восстанавливаем видимость заголовка
+                // Нажата кнопка КОРЗИНА. Восстанавливаем видимость заголовка
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-//                Navigation.findNavController(getActivity().findViewById(R.id.detail_backgroundImage))
-//                        .navigate(R.id.nav_cart);
 
-                // Manually build the NavOptions that manually do
-                // what NavigationUI.onNavDestinationSelected does for you
                 Bundle bundle = new Bundle();
                 NavOptions navOptions = new NavOptions.Builder()
                         .setPopUpTo(R.id.nav_home, false, true)
                         .setRestoreState(true)
                         .build();
 
-                NavController navController = Navigation.findNavController(getActivity(),
-                        R.id.nav_host_fragment_content_main);
                 navController.navigate(R.id.nav_cart, bundle, navOptions);
                 return true;
-
             default:
                 break;
         }
@@ -366,7 +360,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
             favorite = new Favorite();
             favorite.receiptId = id;
             favorite.receiptName = receipt.getName();
-            favorite.receiptKkal = receipt.getEnergy();
+            favorite.receiptPortion = receipt.getPortion();
             favorite.receiptTime = receipt.getTime();
             long rowId = favoriteDao.insert(favorite);
             favorite.id = rowId;

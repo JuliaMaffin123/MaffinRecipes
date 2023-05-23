@@ -170,7 +170,7 @@ components:
         time:
           type: integer
           example: 15
-        energy:
+        portion:
           type: integer
           example: 300
     Component:

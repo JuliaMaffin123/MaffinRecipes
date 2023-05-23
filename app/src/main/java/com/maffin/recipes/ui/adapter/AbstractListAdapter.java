@@ -19,7 +19,7 @@ import java.util.List;
  *  - thumbnail - ImageView, изображение рецепта
  *  - receiptName - TextView, наименование рецепта
  *  - receiptTime - TextView, время приготовления
- *  - receiptEnergy - TextView, каллорийность
+ *  - receiptPortion - TextView, кол-во порций
  *  - deleteFromFavorite - ImageView, кнопка удаления из избранного (опционально)
  */
 public abstract class AbstractListAdapter extends ArrayAdapter {

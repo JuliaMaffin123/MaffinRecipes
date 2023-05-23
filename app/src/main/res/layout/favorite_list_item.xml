@@ -64,7 +64,7 @@
         android:ellipsize="marquee"
         android:singleLine="true"
         android:textSize="10sp"
-        android:text="@string/stub_receipt_energy"/>
+        android:text="@string/stub_receipt_portion"/>
 
 </RelativeLayout>
 
