@@ -325,6 +325,13 @@ public class CartFragment extends Fragment {
         }
 
         @Override
+        public View getView(final int position, final View view, final ViewGroup parent) {
+            View convertView = newView(mContext, parent, position);
+            bindView(position, convertView);
+            return convertView;
+        }
+
+        @Override
         public void bindView(int position, View view) {
             Context context = getContext();
             // Получим ссылки на составные части шаблона
