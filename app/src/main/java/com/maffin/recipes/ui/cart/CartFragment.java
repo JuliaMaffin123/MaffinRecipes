@@ -254,7 +254,7 @@ public class CartFragment extends Fragment {
             for (Model m : modelList) {
                 if (m.itemId == -1) {
                     // Заголовок рецепта
-                    sb.append("\n" + m.name + "\n");
+                    sb.append("\n*" + m.name + "*\n");
                 } else {
                     // Ингредиент
                     sb.append("• " + m.name + " " + m.desc + "\n");
@@ -322,6 +322,13 @@ public class CartFragment extends Fragment {
          */
         public LocalCartAdapter(Context context, List<CartFragment.Model> list) {
             super(context, R.layout.cart_receipt_list_item, R.layout.cart_list_item, list);
+        }
+
+        @Override
+        public View getView(final int position, final View view, final ViewGroup parent) {
+            View convertView = newView(mContext, parent, position);
+            bindView(position, convertView);
+            return convertView;
         }
 
         @Override

@@ -120,6 +120,9 @@ public class TabSteps extends Fragment {
                     ImageManager.fetchImage(context, url, holder.getThumbnail(), R.drawable.ic_cooking_chef_opacity);
                 }
             }
+            // Отключаем нажатие в списке
+            view.setEnabled(false);
+            view.setClickable(false);
         }
     }
 }

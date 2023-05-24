@@ -19,8 +19,11 @@ import com.maffin.recipes.db.entity.Favorite;
 @Database(entities = {Favorite.class, Cart.class, CartReceipt.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
-    public abstract FavoriteDao favoriteDao();
+    /** DAO-класс для доступа к локальной таблице Cart (корзина покупок). */
     public abstract CartDao cartDao();
+    /** DAO-класс для доступа к локальной таблице CartReceipt (рецепты в корзине покупок). */
     public abstract CartReceiptDao cartReceiptDao();
+    /** DAO-класс для доступа к локальной таблице Favorite (избранное). */
+    public abstract FavoriteDao favoriteDao();
 
 }

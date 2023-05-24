@@ -8,5 +8,5 @@
     <!-- Очень маленький размер текста для различных описаний в шаблонах списка -->
     <dimen name="very_small_text_size">10sp</dimen>
     <!-- Размер иконки в тексте описания рецепта -->
-    <dimen name="icon_for_list_item">12dp</dimen>
+    <dimen name="icon_for_list_item">16dp</dimen>
 </resources>

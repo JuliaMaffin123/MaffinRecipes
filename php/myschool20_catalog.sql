@@ -66,14 +66,14 @@ CREATE TABLE `reciepts` (
   `description` varchar(1000) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Краткое описание',
   `source` varchar(300) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Источник',
   `time` int(11) NOT NULL DEFAULT '0' COMMENT 'Время приготовления',
-  `energy` int(11) NOT NULL DEFAULT '0' COMMENT 'Энергетическая ценность'
+  `portion` int(11) NOT NULL DEFAULT '0' COMMENT 'Кол-во порций'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Рецепты';
 
 --
 -- Дамп данных таблицы `reciepts`
 --
 
-INSERT INTO `reciepts` (`id`, `type_id`, `name`, `description`, `source`, `time`, `energy`) VALUES
+INSERT INTO `reciepts` (`id`, `type_id`, `name`, `description`, `source`, `time`, `portion`) VALUES
 (1, 4, 'Сосиски в лаваше', 'Чумовая закуска из простых ингредиентов!', 'https://vt.tiktok.com/ZS8B7cWyb/', 20, 300),
 (2, 3, 'Салат «Красное море»', 'Красивый и сытный салат из крабовых палочек', 'https://vt.tiktok.com/ZS8DDKQwm/', 20, 160);
 

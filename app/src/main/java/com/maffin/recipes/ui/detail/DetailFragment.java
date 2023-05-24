@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.viewpager.widget.ViewPager;
 
@@ -126,17 +128,17 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
             } else {
                 binding.receiptTime.setVisibility(View.GONE);
             }
-            // Каллорийность
-            if (receipt.getEnergy() != 0) {
-                binding.receiptEnergy.setVisibility(View.VISIBLE);
-                binding.receiptEnergy.setText(getString(R.string.template_energy, receipt.getEnergy()));
-                DrawUtils.spanImageIntoText(getContext(), binding.receiptEnergy,
-                        getString(R.string.holder_energy),
-                        R.drawable.ic_outline_fastfood_24,
+            // Кол-во порций
+            if (receipt.getPortion() != 0) {
+                binding.receiptPortion.setVisibility(View.VISIBLE);
+                binding.receiptPortion.setText(getString(R.string.template_portion, receipt.getPortion()));
+                DrawUtils.spanImageIntoText(getContext(), binding.receiptPortion,
+                        getString(R.string.holder_portion),
+                        R.drawable.ic_outline_room_service_24,
                         getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item),
                         getResources().getDimensionPixelOffset(R.dimen.icon_for_list_item));
             } else {
-                binding.receiptEnergy.setVisibility(View.GONE);
+                binding.receiptPortion.setVisibility(View.GONE);
             }
         });
         detailViewModel.getComponents().observe(getViewLifecycleOwner(), c -> {
@@ -228,12 +230,14 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        NavController navController = Navigation.findNavController(getActivity(),
+                R.id.nav_host_fragment_content_main);
+
         switch (item.getItemId()) {
             case android.R.id.home:
                 // Передаем управление прошлому фрагменту в стеке
                 replaceToolbar(false);
-                getActivity().getSupportFragmentManager().popBackStack();
+                navController.popBackStack();
                 return true;
             case R.id.action_share:
                 // Нажата кнопка ПОДЕЛИТЬСЯ
@@ -244,10 +248,10 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
                 toggleFavorite();
                 return true;
             case R.id.action_cart:
-                // Нажата кнопка КОРЗИНА.
-                // Восстанавливаем видимость заголовка
+                // Нажата кнопка КОРЗИНА. Восстанавливаем видимость заголовка
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-                Navigation.findNavController(getActivity().findViewById(R.id.detail_backgroundImage)).navigate(R.id.nav_cart);
+
+                navController.navigate(R.id.nav_cart);
                 return true;
             default:
                 break;
@@ -296,17 +300,19 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
         if (count < 0) {
             return;
         }
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (count == 0)
-                    txtViewCount.setVisibility(View.GONE);
-                else {
-                    txtViewCount.setVisibility(View.VISIBLE);
-                    txtViewCount.setText(Integer.toString(count));
+        if (txtViewCount != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (count == 0)
+                        txtViewCount.setVisibility(View.GONE);
+                    else {
+                        txtViewCount.setVisibility(View.VISIBLE);
+                        txtViewCount.setText(Integer.toString(count));
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -348,7 +354,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
             favorite = new Favorite();
             favorite.receiptId = id;
             favorite.receiptName = receipt.getName();
-            favorite.receiptKkal = receipt.getEnergy();
+            favorite.receiptPortion = receipt.getPortion();
             favorite.receiptTime = receipt.getTime();
             long rowId = favoriteDao.insert(favorite);
             favorite.id = rowId;
@@ -412,7 +418,7 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
      */
     public void shareReceipt() {
         StringBuilder sb = new StringBuilder();
-        sb.append(receipt.getName() + "\n");
+        sb.append("*" + receipt.getName() + "*\n");
         if (components != null) {
             for (Component c : components) {
                 sb.append("• " + c.getName() + " " + c.getCount() + "\n");
@@ -420,8 +426,10 @@ public class DetailFragment extends Fragment implements TabLayout.OnTabSelectedL
             sb.append("\n");
         }
         if (steps != null) {
+            int i = 0;
             for (Step s : steps) {
-                sb.append(s.getDescription() + "\n");
+                i++;
+                sb.append("Шаг " + i + ": " + s.getDescription() + "\n");
             }
         }
 

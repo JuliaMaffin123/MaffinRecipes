@@ -10,7 +10,7 @@
     <string name="menu_home">Рецепты</string>
     <string name="menu_favorite">Избранное</string>
     <string name="menu_cart">Список покупок</string>
-    <string name="menu_detail">Рецепт</string>
+    <string name="menu_detail">Рецепты</string>
 
     <string name="receipt_thumb">Миниатюра рецепта</string>
     <string name="receipt_image">Большая картинка рецепта</string>
@@ -19,13 +19,13 @@
     <string name="empty_home">К сожалению, нет связи с сервером. Проверьте интернет соединение.</string>
     <string name="empty_cart">В корзину покупок еще ничего не добавлено. Откройте понравившийся рецепт и выберите ингредиенты, которые надо докупить.</string>
     <string name="stub_receipt_name">Пример названия рецепта</string>
-    <string name="stub_receipt_time">(=) 10 м</string>
-    <string name="stub_receipt_energy">(=) 100 Ккал</string>
+    <string name="stub_receipt_time">(=) 10 мин.</string>
+    <string name="stub_receipt_portion">(=) 5 порц.</string>
 
     <string name="holder_time">[time-icon]</string>
-    <string name="template_time">[time-icon] %1$d м</string>
-    <string name="holder_energy">[energy-icon]</string>
-    <string name="template_energy">[energy-icon] %1$d кКал</string>
+    <string name="template_time">[time-icon] %1$d мин.</string>
+    <string name="holder_portion">[portion-icon]</string>
+    <string name="template_portion">[portion-icon] %1$d порц.</string>
 
     <string name="tab_components">Ингредиенты</string>
     <string name="tab_steps">Приготовление</string>

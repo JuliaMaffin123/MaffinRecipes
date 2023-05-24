@@ -62,15 +62,15 @@
                 android:text="@string/stub_receipt_time"
                 android:textSize="14sp" />
 
-            <!-- Каллорийность -->
+            <!-- Кол-во порций -->
             <TextView
-                android:id="@+id/receiptEnergy"
+                android:id="@+id/receiptPortion"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/receiptTime"
                 android:ellipsize="marquee"
                 android:singleLine="true"
-                android:text="@string/stub_receipt_energy"
+                android:text="@string/stub_receipt_portion"
                 android:textSize="14sp" />
         </RelativeLayout>
 
